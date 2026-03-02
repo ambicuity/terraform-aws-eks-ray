@@ -52,7 +52,6 @@ env/
 *.swp
 *.swo
 *~
-.DS_Store
 
 # Secrets
 *.pem
