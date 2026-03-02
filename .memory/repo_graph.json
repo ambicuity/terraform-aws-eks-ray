@@ -1,12 +1,12 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-02-27T19:18:44Z",
+  "generated_at": "2026-03-02T17:15:29Z",
   "nodes": [
     {
       "path": "INTERNAL_LOG.md",
       "type": "markdown",
-      "size_bytes": 2928,
-      "hash": "sha256:106b5b9673b4c74b17a65b6bb49bf16309efe4e296b9e897efb2284116e786e5"
+      "size_bytes": 7162,
+      "hash": "sha256:09dacb0cf629f234ab46f9c25ac0460647d2cdca78c144a787b713012abbeb2d"
     },
     {
       "path": "update_ruleset.json",
@@ -53,14 +53,38 @@
     {
       "path": "ROADMAP.md",
       "type": "markdown",
-      "size_bytes": 2666,
-      "hash": "sha256:dfc0a3b37dad6ec66e6df6f690b8cd02ae6a4097e8661a77f719c0499839d995"
+      "size_bytes": 2725,
+      "hash": "sha256:99b0dbd1f48d9fb71941f5e2e82b5e56f5fd6ebbf711fd36eb75b3739c366633"
+    },
+    {
+      "path": "DEPLOYMENT.md",
+      "type": "markdown",
+      "size_bytes": 4904,
+      "hash": "sha256:01963bcc62fc28a6c6f8d84c48ca116bfa1aba687056c477ab81c60283e58440"
     },
     {
       "path": "CONTRIBUTING.md",
       "type": "markdown",
       "size_bytes": 2045,
       "hash": "sha256:d9f7d3168cc37ef8d4288dff4cedcefba3fa20303bb18a6a7258644b6c08d133"
+    },
+    {
+      "path": "docker-compose.yml",
+      "type": "yaml",
+      "size_bytes": 2730,
+      "hash": "sha256:7cfc02ca8b19991b344e76e4c1c2048f2ec89afdb300231a6ff9678ec5f4c62b"
+    },
+    {
+      "path": "GEMINI.md",
+      "type": "markdown",
+      "size_bytes": 2041,
+      "hash": "sha256:7c016f5e7c87128fdf636f9545276710fd58abfe4352932c137d709afe32b489"
+    },
+    {
+      "path": "test_gemini.py",
+      "type": "python",
+      "size_bytes": 247,
+      "hash": "sha256:428a6ef4c9537bba411c213394cf97a748501a1b2fc8379dee85084089ca9da2"
     },
     {
       "path": "SECURITY.md",
@@ -77,14 +101,14 @@
     {
       "path": "terraform/velero.tf",
       "type": "terraform",
-      "size_bytes": 5786,
-      "hash": "sha256:f74b32ebd156f4b93b78943fa610864ede4ec03c534fa1717e1a4ac933afd815"
+      "size_bytes": 5776,
+      "hash": "sha256:37b1584879df3f462010ccbdfe7b4e5152492774ab17a269f0ca0e5e64199fb2"
     },
     {
       "path": "terraform/main.tf",
       "type": "terraform",
-      "size_bytes": 8785,
-      "hash": "sha256:b8bc23b7806ebf99a2989a9ad3f44afde734070247c27199e6dade21daca69e2"
+      "size_bytes": 7260,
+      "hash": "sha256:08fd2809ebe618076485a1597845b8cc39adfdac754b5be04870a30fec08c075"
     },
     {
       "path": "terraform/versions.tf",
@@ -101,8 +125,8 @@
     {
       "path": "terraform/node_pools.tf",
       "type": "terraform",
-      "size_bytes": 9021,
-      "hash": "sha256:65d3240da763317c173bfdb6fc4f988729d3c81314312e81bc15235d29dfa723"
+      "size_bytes": 9088,
+      "hash": "sha256:9a34703b7afd53c7ab92b08bad8bc97665e977e9795ceac34db3403c4f06d712"
     },
     {
       "path": "terraform/README.md",
@@ -149,8 +173,8 @@
     {
       "path": "terraform/examples/complete/main.tf",
       "type": "terraform",
-      "size_bytes": 1721,
-      "hash": "sha256:3f508fe8f3ed4967e6dd5c3de8017fd316730e38104821c38d031818c06df77c"
+      "size_bytes": 1768,
+      "hash": "sha256:d613d2dcd122c90573e1b690ada04bed37b67cc94b78faac55c46fca1aa186fb"
     },
     {
       "path": "terraform/examples/complete/versions.tf",
@@ -197,26 +221,32 @@
     {
       "path": "tests/test_decision_extractor.py",
       "type": "python",
-      "size_bytes": 9045,
-      "hash": "sha256:eb9516b4ef572387c49c891bbe072cee4ea63826a0c30a3b573f79cdc8270098"
+      "size_bytes": 9047,
+      "hash": "sha256:e720b9e0a71a3af0d5864638deedcfa4cf8cf53924c68ec88ca8ef1245668f68"
+    },
+    {
+      "path": "tests/test_execution_logger.py",
+      "type": "python",
+      "size_bytes": 11076,
+      "hash": "sha256:a1f592983f93813e17c60073e559f1c7c042792641b0719d132e8045e4a7d774"
     },
     {
       "path": "tests/test_delta.py",
       "type": "python",
-      "size_bytes": 4926,
-      "hash": "sha256:12d28c17355dcd9a6069b3d0a3158cd3d12b90fa9ad389b4008bdaa5bcd75ff6"
+      "size_bytes": 4920,
+      "hash": "sha256:48f3cce2a651d9e1a83f40130de7c61037952f51dd103eac902b6f872b820250"
     },
     {
       "path": "tests/test_alpha.py",
       "type": "python",
-      "size_bytes": 5450,
-      "hash": "sha256:dba6d7d04690ed9025996d6be7aaeab914dabb3591c3125262a7135e8ec071ca"
+      "size_bytes": 5433,
+      "hash": "sha256:b1a050509e41d2a117b23dde500f8212de8618a32f916bb9f0dabca68cd39472"
     },
     {
       "path": "tests/test_gh_utils.py",
       "type": "python",
-      "size_bytes": 11942,
-      "hash": "sha256:c6c30bf572bc2f5b2e38abe4b76b698903933acc6943dd1264e77cd0b04f72ac"
+      "size_bytes": 11770,
+      "hash": "sha256:5107ba9e1d10198ea0a4f93968447d72185024a12a94db3f84fa018e0fe39f1d"
     },
     {
       "path": "tests/__init__.py",
@@ -227,20 +257,20 @@
     {
       "path": "tests/test_validate_memory.py",
       "type": "python",
-      "size_bytes": 12361,
-      "hash": "sha256:b380801b3028213c88510e1d0dbc328a7a24227ab1ab1e40344e06b2ab6e9667"
+      "size_bytes": 12389,
+      "hash": "sha256:e3806e9f8a6e32d142e8e0ccf124ec5d867adaddf7289c074cacf8c7ba67da48"
     },
     {
       "path": "tests/test_beta.py",
       "type": "python",
-      "size_bytes": 5461,
-      "hash": "sha256:0ed789873194e8718719045a4334203cf6ddc14c3d9750af4609e646dc1b5786"
+      "size_bytes": 5454,
+      "hash": "sha256:cb4f861185f71a7ecf32d87f1db9919ce1756a44aea12fa0318f14074e0a366c"
     },
     {
       "path": "tests/test_gamma.py",
       "type": "python",
-      "size_bytes": 4978,
-      "hash": "sha256:bde03f6cc33c1c8bf9402a6f16603020294576e55e3b5da78e735afd1b171bc9"
+      "size_bytes": 4944,
+      "hash": "sha256:b3271230a4557a048c7333058bf4b6856e68b88a9ec69474ca98774273f8f90c"
     },
     {
       "path": "tests/README.md",
@@ -249,16 +279,22 @@
       "hash": "sha256:2041f6ba0d61ac1dbbcb5eaaf7cd682d08b1074178fa4ad2d0265a3cb5b144f8"
     },
     {
+      "path": "tests/test_edge_cases.py",
+      "type": "python",
+      "size_bytes": 27911,
+      "hash": "sha256:9301598958279ceb86a89b8ca3eb27027d04bcf2ab5bfd5634c8a19923032691"
+    },
+    {
       "path": "tests/test_repo_ingestion.py",
       "type": "python",
-      "size_bytes": 9256,
-      "hash": "sha256:7bb6adc5bd176105bf58bb0a23111587450dbf84b9dd17f99ddb7bb64777d316"
+      "size_bytes": 9235,
+      "hash": "sha256:9e924c772b3f723cac533f4196109cfd6822f32eced718cac39b0dc046eae1c5"
     },
     {
       "path": "tests/test_memory_retriever.py",
       "type": "python",
-      "size_bytes": 8694,
-      "hash": "sha256:ec29c55df01543cd96b5be644d415ce582da78dd3a4e7008c4a3f8d5b9a8a66c"
+      "size_bytes": 10138,
+      "hash": "sha256:2bda37ec15643944dda13e9e5fda1b522bc384d8934f7fe66c8270b95c335ff0"
     },
     {
       "path": "tests/fixtures/__init__.py",
@@ -269,8 +305,8 @@
     {
       "path": "tests/fixtures/github_api_fixtures.py",
       "type": "python",
-      "size_bytes": 7955,
-      "hash": "sha256:36da87cbade18d37c3cf3f50e3b9fff10beab13425da1f0f04bafe2343504993"
+      "size_bytes": 8021,
+      "hash": "sha256:899e9bd3823db1563bd4c39fada23a29aa0d3a89ade30a827e14d9416b08c2bc"
     },
     {
       "path": "docs/ai-automation.md",
@@ -371,44 +407,26 @@
     {
       "path": "scripts/gh_utils.py",
       "type": "python",
-      "size_bytes": 27761,
-      "hash": "sha256:1e94066b36388e6c87ebe300feb7a99a2cb8b45f12550e9cf9478171e2051b9d"
-    },
-    {
-      "path": "scripts/beta_reviewer.py",
-      "type": "python",
-      "size_bytes": 10132,
-      "hash": "sha256:bac89334518470d12b9807a2c6988a7f55682ea8c93adddea10bd16a222a2f74"
+      "size_bytes": 27755,
+      "hash": "sha256:1015e91821e72c6d8c7225644262e4f0901a8bd9496b4e5cb142e408b072efe1"
     },
     {
       "path": "scripts/ai_duplicate_detector.py",
       "type": "python",
-      "size_bytes": 7452,
-      "hash": "sha256:9fc0b265624c20f057832214cd8fd639cf123af5fb96c1e778603ce29eae0bda"
+      "size_bytes": 7364,
+      "hash": "sha256:9ef8bff06a676bc95f5fa6a99909b09d8b870e9a35f51afc888a71182def5143"
     },
     {
       "path": "scripts/repo_ingestion.py",
       "type": "python",
-      "size_bytes": 19787,
-      "hash": "sha256:43aa874c836bdf3a6087e0117b47ab735458e6411716079ab3a49c1369bf53a3"
-    },
-    {
-      "path": "scripts/ai_test_engineer.py",
-      "type": "python",
-      "size_bytes": 5997,
-      "hash": "sha256:3b75ed6451c4e28e9b29d4f1b8b516a8a4829d888d3ea5554a8e612c2362510b"
+      "size_bytes": 19895,
+      "hash": "sha256:c95556ebf038f7cd359a6f17f8a4c10098fd8cc223564674e56d327aaf3a5e15"
     },
     {
       "path": "scripts/memory_retriever.py",
       "type": "python",
-      "size_bytes": 12034,
-      "hash": "sha256:3ee3089365bd72e3532aa915dc6ec491d05542355b73f87e5ec1c4d41b8f2af4"
-    },
-    {
-      "path": "scripts/ai_issue_solver.py",
-      "type": "python",
-      "size_bytes": 7855,
-      "hash": "sha256:66657543c7df069dfb65dbf51d62b2b76ac0be27880c7faa504a27c128a2c4d5"
+      "size_bytes": 19264,
+      "hash": "sha256:65dec906a7d21a6acfe4219f43a32d7cac078efdf5a4ddd7fb8edadf85df9b5f"
     },
     {
       "path": "scripts/fix_issue_33.py",
@@ -425,14 +443,14 @@
     {
       "path": "scripts/agent_context_builder.py",
       "type": "python",
-      "size_bytes": 10739,
-      "hash": "sha256:05548b06dcfb28501bd16fb48699931c76f9274833b174db6aeb0174eea1e8fa"
+      "size_bytes": 10747,
+      "hash": "sha256:54ad4d7ba8c1ab8680bbdb30138b95ef03e3bf8a5fac3068f9ae5a4d09875162"
     },
     {
       "path": "scripts/memory_schemas.py",
       "type": "python",
-      "size_bytes": 12680,
-      "hash": "sha256:ebc7b3f70f5d1368e0c4838b36f9944429b3d5624cac96008ea124d4333d644f"
+      "size_bytes": 14930,
+      "hash": "sha256:7950f67b5b9baf5ec141484b5690e5d3d0b5ac95e7f25f39714ae0953a2997af"
     },
     {
       "path": "scripts/validate_cluster_identity.py",
@@ -441,46 +459,46 @@
       "hash": "sha256:6f40c4be99bfd83f5f538852b36000089ca8ada7e70d59626b37f4cff6a795fb"
     },
     {
-      "path": "scripts/gamma_triage.py",
+      "path": "scripts/query_embedder.py",
       "type": "python",
-      "size_bytes": 11432,
-      "hash": "sha256:b5062c2c60a3077f00fd4740b0dff5151c5c2fa57ef18b4aee1e16cebebcf13a"
+      "size_bytes": 12941,
+      "hash": "sha256:92a7fc7b4d73dfc77353ea23b54119e89445c268a00d67d3a0842b806356ba44"
     },
     {
-      "path": "scripts/alpha_governor.py",
+      "path": "scripts/memory_agent_tool.py",
       "type": "python",
-      "size_bytes": 8510,
-      "hash": "sha256:f1290c3d8b1c90b6a5b072bdb4ded76ccee6c60b91d536de485eb2fc81f8f336"
+      "size_bytes": 2267,
+      "hash": "sha256:b059702f093646f8786f1eaac5ea9bc7a317213a89f841bda5e716e1f5a9f318"
     },
     {
       "path": "scripts/issue_pr_embedder.py",
       "type": "python",
-      "size_bytes": 9346,
-      "hash": "sha256:48ff78eb77ec415acade34e1dc4e693531597027d128f34758ec8f2fa8e6a306"
+      "size_bytes": 9360,
+      "hash": "sha256:199fdefc2fe5d63ec059a054eb64ca50034184df59bcb8230aba6197ab761a54"
     },
     {
       "path": "scripts/decision_extractor.py",
       "type": "python",
-      "size_bytes": 12423,
-      "hash": "sha256:60514ed568508953f3a1d993cc826616d026133256c9a3215110c1653e26c3d5"
+      "size_bytes": 12262,
+      "hash": "sha256:b302442dad27c81dd118aedfb5b226c8959f99e02ec95c1e0dd124b61d331b49"
     },
     {
       "path": "scripts/validate_memory.py",
       "type": "python",
-      "size_bytes": 11532,
-      "hash": "sha256:01032c0fdb2b752e34abf4cc3bc7227715ad315e9a066ffd8096fdf25ca06591"
+      "size_bytes": 11833,
+      "hash": "sha256:9574c17396b03dcbdd71e944be0bef29fba50979745c97875afc255967a796d2"
+    },
+    {
+      "path": "scripts/execution_logger.py",
+      "type": "python",
+      "size_bytes": 12392,
+      "hash": "sha256:7e1edffb043de47c92b33f25a8f8951abd3fd28655ad541f891e87418b82b62d"
     },
     {
       "path": "scripts/embedding_engine.py",
       "type": "python",
-      "size_bytes": 13674,
-      "hash": "sha256:594e268ebba9c29cba264bda25647f3d7c4523c2f822e0904ec9ee477f687154"
-    },
-    {
-      "path": "scripts/delta_executor.py",
-      "type": "python",
-      "size_bytes": 15681,
-      "hash": "sha256:9f8a089cf2e0a376e511eb3b399f45f09f202b7f028dbcec77f331d2c50ffb87"
+      "size_bytes": 14196,
+      "hash": "sha256:8ede8b1b1842cb13116456f933b62d91f15f2210bbbc76012279a2d551977421"
     },
     {
       "path": "monitoring/dashboards/ray-cluster-health.json",
@@ -544,13 +562,13 @@
       "relation": "imports"
     },
     {
-      "from": "tests/test_delta.py",
-      "to": "scripts/delta_executor.py",
+      "from": "tests/test_execution_logger.py",
+      "to": "scripts/execution_logger.py",
       "relation": "imports"
     },
     {
-      "from": "tests/test_alpha.py",
-      "to": "scripts/alpha_governor.py",
+      "from": "tests/test_execution_logger.py",
+      "to": "scripts/memory_retriever.py",
       "relation": "imports"
     },
     {
@@ -569,13 +587,8 @@
       "relation": "imports"
     },
     {
-      "from": "tests/test_beta.py",
-      "to": "scripts/beta_reviewer.py",
-      "relation": "imports"
-    },
-    {
-      "from": "tests/test_gamma.py",
-      "to": "scripts/gamma_triage.py",
+      "from": "tests/test_edge_cases.py",
+      "to": "scripts/gh_utils.py",
       "relation": "imports"
     },
     {
@@ -594,11 +607,6 @@
       "relation": "imports"
     },
     {
-      "from": "scripts/beta_reviewer.py",
-      "to": "scripts/gh_utils.py",
-      "relation": "imports"
-    },
-    {
       "from": "scripts/ai_duplicate_detector.py",
       "to": "scripts/gh_utils.py",
       "relation": "imports"
@@ -606,16 +614,6 @@
     {
       "from": "scripts/repo_ingestion.py",
       "to": "scripts/memory_schemas.py",
-      "relation": "imports"
-    },
-    {
-      "from": "scripts/ai_test_engineer.py",
-      "to": "scripts/gh_utils.py",
-      "relation": "imports"
-    },
-    {
-      "from": "scripts/ai_issue_solver.py",
-      "to": "scripts/gh_utils.py",
       "relation": "imports"
     },
     {
@@ -629,13 +627,13 @@
       "relation": "imports"
     },
     {
-      "from": "scripts/gamma_triage.py",
-      "to": "scripts/gh_utils.py",
+      "from": "scripts/memory_agent_tool.py",
+      "to": "scripts/memory_retriever.py",
       "relation": "imports"
     },
     {
-      "from": "scripts/alpha_governor.py",
-      "to": "scripts/gh_utils.py",
+      "from": "scripts/memory_agent_tool.py",
+      "to": "scripts/query_embedder.py",
       "relation": "imports"
     },
     {
@@ -654,21 +652,21 @@
       "relation": "imports"
     },
     {
-      "from": "scripts/embedding_engine.py",
+      "from": "scripts/execution_logger.py",
       "to": "scripts/memory_schemas.py",
       "relation": "imports"
     },
     {
-      "from": "scripts/delta_executor.py",
-      "to": "scripts/gh_utils.py",
+      "from": "scripts/embedding_engine.py",
+      "to": "scripts/memory_schemas.py",
       "relation": "imports"
     }
   ],
   "metrics": {
-    "total_files": 89,
+    "total_files": 92,
     "python_files": 36,
     "terraform_files": 14,
-    "helm_files": 3,
-    "markdown_files": 23
+    "helm_files": 4,
+    "markdown_files": 25
   }
 }

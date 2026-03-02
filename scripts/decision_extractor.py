@@ -74,7 +74,6 @@ _TAG_PATTERN = re.compile(
     re.IGNORECASE | re.MULTILINE,
 )
 # Markdown heading-level ADR detection
-_ADR_HEADING = re.compile(r"^#{1,3}\s+ADR[- _]?\d+", re.MULTILINE)
 # Secret/token scrubbing: redact anything that looks like a 32+ char alphanumeric/base64 string
 _SECRET_RE = re.compile(r"[A-Za-z0-9+/=]{32,}")
 

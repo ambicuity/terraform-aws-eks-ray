@@ -10,3 +10,8 @@ runs:
     - name: Install Gemini CLI
       shell: bash
       run: npm install -g @google/gemini-cli
+    - name: Configure Git Identity for CI commits
+      shell: bash
+      run: |
+        git config --global user.email "gemini-ai-agent@github-actions.local"
+        git config --global user.name "Gemini AI Agent"

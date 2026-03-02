@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-02-27T19:18:44Z",
+  "generated_at": "2026-03-02T17:15:29Z",
   "workflows": [
     {
       "name": "AI Documentation Sync",
@@ -21,25 +21,6 @@
       }
     },
     {
-      "name": "AI Duplicate Issue Detector",
-      "path": "/Users/ritesh/Downloads/submission_folder/fork/Terraform-Driven-Ray-on-Kubernetes-Platform/.github/workflows/ai-duplicate-detector.yml",
-      "triggers": [
-        "issues",
-        "types: [opened]"
-      ],
-      "jobs": [
-        "issues",
-        "detect"
-      ],
-      "depends_on_scripts": [
-        "scripts/ai_duplicate_detector.py"
-      ],
-      "permissions": {
-        "issues": "write",
-        "contents": "read"
-      }
-    },
-    {
       "name": "Gemini AI Issue Solver",
       "path": "/Users/ritesh/Downloads/submission_folder/fork/Terraform-Driven-Ray-on-Kubernetes-Platform/.github/workflows/ai-issue-solver.yml",
       "triggers": [
@@ -53,9 +34,7 @@
         "issue_comment",
         "solve"
       ],
-      "depends_on_scripts": [
-        "scripts/ai_issue_solver.py"
-      ],
+      "depends_on_scripts": [],
       "permissions": {
         "issues": "write",
         "contents": "read"
@@ -75,9 +54,7 @@
         "issue_comment",
         "suggest-tests"
       ],
-      "depends_on_scripts": [
-        "scripts/ai_test_engineer.py"
-      ],
+      "depends_on_scripts": [],
       "permissions": {
         "contents": "read",
         "pull-requests": "write"
@@ -89,16 +66,17 @@
       "triggers": [
         "repository_dispatch",
         "types: [governance-cycle]",
-        "workflow_dispatch"
+        "workflow_dispatch",
+        "concurrency",
+        "group: alpha-governance",
+        "cancel-in-progress: false  # let governance complete if already running"
       ],
       "jobs": [
         "repository_dispatch",
         "workflow_dispatch",
         "govern"
       ],
-      "depends_on_scripts": [
-        "scripts/alpha_governor.py"
-      ],
+      "depends_on_scripts": [],
       "permissions": {
         "contents": "write",
         "issues": "write"
@@ -143,15 +121,16 @@
       "path": "/Users/ritesh/Downloads/submission_folder/fork/Terraform-Driven-Ray-on-Kubernetes-Platform/.github/workflows/beta-reviewer.yml",
       "triggers": [
         "pull_request",
-        "types: [labeled]"
+        "types: [labeled]",
+        "concurrency",
+        "group: beta-${{ github.event.pull_request.number }}",
+        "cancel-in-progress: true"
       ],
       "jobs": [
         "pull_request",
         "review"
       ],
-      "depends_on_scripts": [
-        "scripts/beta_reviewer.py"
-      ],
+      "depends_on_scripts": [],
       "permissions": {
         "contents": "write",
         "pull-requests": "write",
@@ -235,6 +214,39 @@
       }
     },
     {
+      "name": "CI — Unified Quality Gate",
+      "path": "/Users/ritesh/Downloads/submission_folder/fork/Terraform-Driven-Ray-on-Kubernetes-Platform/.github/workflows/ci.yml",
+      "triggers": [
+        "push",
+        "branches: [main, develop]",
+        "pull_request",
+        "branches: [main]",
+        "workflow_dispatch",
+        "concurrency",
+        "group: ci-${{ github.ref }}",
+        "cancel-in-progress: true"
+      ],
+      "jobs": [
+        "push",
+        "pull_request",
+        "workflow_dispatch",
+        "lint",
+        "test",
+        "tf-validate",
+        "build-check",
+        "ci-status"
+      ],
+      "depends_on_scripts": [],
+      "permissions": {
+        "contents": "read",
+        "pull-requests": "write  # for coverage comment on PRs",
+        "env": "",
+        "PYTHON_VERSION": "\"3.11\"",
+        "TERRAFORM_VERSION": "\"~> 1.7.0\"",
+        "# Job 1": "Python Lint"
+      }
+    },
+    {
       "name": "Code Coverage",
       "path": "/Users/ritesh/Downloads/submission_folder/fork/Terraform-Driven-Ray-on-Kubernetes-Platform/.github/workflows/codecov.yml",
       "triggers": [
@@ -312,15 +324,16 @@
       "path": "/Users/ritesh/Downloads/submission_folder/fork/Terraform-Driven-Ray-on-Kubernetes-Platform/.github/workflows/delta-executor.yml",
       "triggers": [
         "issues",
-        "types: [labeled]"
+        "types: [labeled]",
+        "concurrency",
+        "group: delta-${{ github.event.issue.number }}",
+        "cancel-in-progress: true"
       ],
       "jobs": [
         "issues",
         "execute"
       ],
-      "depends_on_scripts": [
-        "scripts/delta_executor.py"
-      ],
+      "depends_on_scripts": [],
       "permissions": {
         "contents": "write",
         "pull-requests": "write",
@@ -420,15 +433,16 @@
       "path": "/Users/ritesh/Downloads/submission_folder/fork/Terraform-Driven-Ray-on-Kubernetes-Platform/.github/workflows/gamma-triage.yml",
       "triggers": [
         "issues",
-        "types: [opened, edited]"
+        "types: [opened]",
+        "concurrency",
+        "group: gamma-${{ github.event.issue.number }}",
+        "cancel-in-progress: true"
       ],
       "jobs": [
         "issues",
         "triage"
       ],
-      "depends_on_scripts": [
-        "scripts/gamma_triage.py"
-      ],
+      "depends_on_scripts": [],
       "permissions": {
         "issues": "write",
         "contents": "write   # Needed to commit queue.json and INTERNAL_LOG.md via Contents API"
@@ -485,7 +499,7 @@
       "path": "/Users/ritesh/Downloads/submission_folder/fork/Terraform-Driven-Ray-on-Kubernetes-Platform/.github/workflows/issue-triage.yml",
       "triggers": [
         "issues",
-        "types: [opened, edited]"
+        "types: [opened]"
       ],
       "jobs": [
         "issues",
@@ -566,7 +580,10 @@
         "scripts/validate_memory.py"
       ],
       "permissions": {
-        "contents": "write"
+        "contents": "write",
+        "concurrency": "",
+        "group": "memory-build",
+        "cancel-in-progress": "true"
       }
     },
     {
@@ -599,7 +616,10 @@
         "scripts/validate_memory.py"
       ],
       "permissions": {
-        "contents": "write"
+        "contents": "write",
+        "concurrency": "",
+        "group": "memory-build",
+        "cancel-in-progress": "true"
       }
     },
     {

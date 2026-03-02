@@ -46,5 +46,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
           GITHUB_REPOSITORY: ${{ github.repository }}
+          GEMINI_MODEL: gemini-2.0-flash
         run: |
-          gemini -y 'Run the delta-executor skill to resolve issue ${{ github.event.issue.number }}. You have my permission to execute.'
+          gemini -y --model gemini-2.0-flash \
+            'Use the delta-executor subagent to resolve issue ${{ github.event.issue.number }}. You have my permission to execute.'

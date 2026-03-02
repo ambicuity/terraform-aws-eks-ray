@@ -47,5 +47,7 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
+          GEMINI_MODEL: gemini-2.0-flash
         run: |
-          gemini -y 'Run the alpha-governor skill to perform the governance cycle. You have my permission to execute.'
+          gemini -y --model gemini-2.0-flash \
+            'Use the alpha-governor subagent to perform the governance cycle. You have my permission to execute.'

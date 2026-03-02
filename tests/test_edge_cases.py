@@ -113,13 +113,13 @@ class TestGeminiNetworkFailures(unittest.TestCase):
                     raise err
 
                 class Ctx:
-                    def __enter__(self_inner):
-                        return self_inner
+                    def __enter__(self):
+                        return self
 
-                    def __exit__(self_inner, *_):
+                    def __exit__(self, *_):
                         pass
 
-                    def read(self_inner):
+                    def read(self):
                         return json.dumps(good_response).encode()
 
                 return Ctx()
