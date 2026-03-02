@@ -23,13 +23,19 @@ from query_embedder import embed_query
 
 logger = logging.getLogger(__name__)
 
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Query project semantic memory.")
     parser.add_argument("--query", type=str, required=False, help="Semantic search query")
     parser.add_argument("--k", type=int, default=5, help="Number of results to return")
-    parser.add_argument("--decisions-only", action="store_true", help="Only return architectural decisions")
-    parser.add_argument("--file-type", type=str, default=None, help="Filter by extension (e.g. python, terraform, markdown)")
-    
+    parser.add_argument(
+        "--decisions-only", action="store_true", help="Only return architectural decisions"
+    )
+    parser.add_argument(
+        "--file-type", type=str, default=None,
+        help="Filter by extension (e.g. python, terraform, markdown)"
+    )
+
     args = parser.parse_args()
 
     # If asking for decisions only
@@ -44,7 +50,7 @@ def main() -> None:
         sys.exit(1)
 
     # 1. Embed Query
-    # This may return None if onnxruntime is missing, which is handled gracefully by MemoryRetriever
+    # This may return None if onnxruntime is missing, handled gracefully by MemoryRetriever
     query_vec = embed_query(args.query)
 
     # 2. Retrieve top-k blocks
@@ -62,6 +68,7 @@ def main() -> None:
         "results": [r.to_dict() for r in results]
     }
     print(json.dumps(output, indent=2))
+
 
 if __name__ == "__main__":
     main()

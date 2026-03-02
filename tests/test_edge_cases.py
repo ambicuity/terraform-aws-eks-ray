@@ -104,7 +104,7 @@ class TestGeminiNetworkFailures(unittest.TestCase):
 
         client = _make_gemini_client()
         with patch("urllib.request.urlopen") as mock_open, \
-             patch("time.sleep") as mock_sleep:
+             patch("time.sleep") as mock_sleep:  # noqa: F841
             mock_open.side_effect = [err, self._urlopen_side_effect(good_response)(None)]
 
             # Simulate: first call raises 429, second call succeeds
