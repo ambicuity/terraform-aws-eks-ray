@@ -20,7 +20,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 import alpha_governor  # noqa: E402
 
 from tests.fixtures.github_api_fixtures import (  # noqa: E402
-    PR_AI_GENERATED, PR_FEATURE, PR_MERGED,
+    PR_FEATURE, PR_MERGED,
 )
 
 

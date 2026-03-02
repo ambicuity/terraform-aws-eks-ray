@@ -418,8 +418,6 @@ class MemoryRetriever:
         self._exec_weights = weights
         return weights
 
-
-
     def search_decisions(
         self,
         query_embedding: list[float],

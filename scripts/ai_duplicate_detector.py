@@ -11,12 +11,8 @@ to potential duplicates.
 Environment variables required:
   - GEMINI_API_KEY, GITHUB_TOKEN, ISSUE_NUMBER, GITHUB_REPOSITORY
 """
-
-import os
 import sys
 import json
-import time
-# Legacy duplicate detector — now uses gh_utils.GeminiClient
 
 
 SYSTEM_PROMPT = (
@@ -103,8 +99,6 @@ def fetch_all_issues(repo: str, issue_num: str, token: str) -> list:
             break
         page += 1
     return issues
-
-
 
 
 def post_comment(body: str, issue_number: str, repo: str, token: str) -> None:

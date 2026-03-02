@@ -29,15 +29,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Set up Gemini CLI
+        uses: ./.github/actions/setup-gemini-cli
+
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Run Agent Delta (Contributor)
+      - name: Run Agent Delta (Contributor) via Gemini CLI
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
           GITHUB_REPOSITORY: ${{ github.repository }}
-        run: python scripts/delta_executor.py
+        run: gemini "Run the delta-executor skill to resolve issue #${{ github.event.issue.number }}. You have my permission to execute."

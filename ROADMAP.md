@@ -48,6 +48,7 @@
 | Agent Delta (Contributor) — `delta_executor.py` | 🔄 In Progress |
 | Agent Beta (Maintainer) — `beta_reviewer.py` | 🔄 In Progress |
 | Agent Alpha (Governor) — `alpha_governor.py` | 🔄 In Progress |
+| Gemini CLI Integration (`setup-gemini-cli`) | ✅ Done |
 | GitHub Actions wiring (4 new workflows) | 🔄 In Progress |
 | `.ai_metadata/queue.json` state machine | 🔄 In Progress |
 | `INTERNAL_LOG.md` bus-factor log | 🔄 In Progress |

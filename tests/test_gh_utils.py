@@ -13,7 +13,6 @@ Tests cover:
 
 import sys
 import os
-import json
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -289,13 +288,9 @@ class TestGeminiExtractText(unittest.TestCase):
 
     def test_thinking_disabled_in_payload(self):
         """thinkingBudget=0 must be present in generationConfig to suppress default thinking."""
-        import json as _json
-        client = gh_utils.GeminiClient("test-key")
-        # Reconstruct what generate() sends by checking the constant structure
         # Since generate() builds payload internally, verify via model default constant
         self.assertEqual(gh_utils.GEMINI_MODEL, "gemini-2.5-pro")
 
 
 if __name__ == "__main__":
     unittest.main()
-

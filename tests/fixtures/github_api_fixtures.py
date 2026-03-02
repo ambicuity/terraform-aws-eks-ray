@@ -198,7 +198,10 @@ COMMENT_CREATED = {
     "body": "Automated comment body",
     "user": {"login": "github-actions[bot]", "id": 41898282},
     "created_at": _NOW,
-    "html_url": "https://github.com/ambicuity/Terraform-Driven-Ray-on-Kubernetes-Platform/issues/42#issuecomment-987654321",
+    "html_url": (
+        "https://github.com/ambicuity/"
+        "Terraform-Driven-Ray-on-Kubernetes-Platform/issues/42#issuecomment-987654321"
+    ),
 }
 
 REF_CREATED = {
@@ -218,7 +221,10 @@ CONTENTS_RESPONSE = {
         "path": "scripts/fix_issue_42.py",
         "sha": "newsha123",
         "size": 500,
-        "html_url": "https://github.com/ambicuity/Terraform-Driven-Ray-on-Kubernetes-Platform/blob/main/scripts/fix_issue_42.py",
+        "html_url": (
+            "https://github.com/ambicuity/"
+            "Terraform-Driven-Ray-on-Kubernetes-Platform/blob/main/scripts/fix_issue_42.py"
+        ),
     },
     "commit": {"sha": "commitsha789", "message": "fix(ai-fix/42): implement solution for issue #42"},
 }

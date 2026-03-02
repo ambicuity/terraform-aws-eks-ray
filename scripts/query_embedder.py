@@ -52,7 +52,6 @@ import json
 import logging
 import math
 import os
-import struct
 import sys
 from typing import Any
 

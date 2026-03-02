@@ -14,7 +14,7 @@ import sys
 import os
 import json
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 
@@ -22,7 +22,6 @@ import gamma_triage  # noqa: E402
 
 from tests.fixtures.github_api_fixtures import (  # noqa: E402
     ISSUE_VALID,
-    ISSUE_MISSING_MARKERS,
     ISSUE_DUPLICATE_CANDIDATE,
     ISSUE_LOW_PRIORITY,
 )

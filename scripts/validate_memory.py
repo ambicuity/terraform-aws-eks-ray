@@ -34,19 +34,17 @@ import json
 import logging
 import os
 import sys
-from typing import Any
 
 SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
 if SCRIPTS_DIR not in sys.path:
     sys.path.insert(0, SCRIPTS_DIR)
 
-from memory_schemas import (
+from memory_schemas import (  # noqa: E402
     TOTAL_SIZE_LIMIT,
     SIZE_LIMITS,
     EMBEDDING_MODEL_NAME,
     EMBEDDING_MODEL_VERSION,
     VALIDATORS,
-    ValidationError,
     validate_file,
 )
 

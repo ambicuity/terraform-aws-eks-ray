@@ -65,6 +65,7 @@ DECISION_TYPES = frozenset([
 # Validation helpers
 # ---------------------------------------------------------------------------
 
+
 class ValidationError(Exception):
     """Raised when a memory artifact fails schema validation."""
 
@@ -134,7 +135,10 @@ def validate_module_map(data: dict[str, Any]) -> None:
     _require_keys(data, ["generated_at", "modules"], ctx)
     _require_type(data["modules"], list, "modules", ctx)
 
-    valid_types = {"python_package", "terraform_module", "helm_chart", "rego_policy", "ci_workflow", "docs", "yaml", "other"}
+    valid_types = {
+        "python_package", "terraform_module", "helm_chart",
+        "rego_policy", "ci_workflow", "docs", "yaml", "other"
+    }
     for i, mod in enumerate(data["modules"]):
         mod_ctx = f"{ctx}.modules[{i}]"
         _require_keys(mod, ["name", "path", "type", "files"], mod_ctx)

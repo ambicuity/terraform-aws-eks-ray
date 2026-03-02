@@ -8,7 +8,6 @@ Tests structural ingestion functions with mocked filesystem data.
 No actual repo files are required — all fixtures are created in tempfile.
 """
 
-import json
 import os
 import sys
 import tempfile
@@ -17,13 +16,12 @@ import unittest
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO_ROOT, "scripts"))
 
-from repo_ingestion import (
+from repo_ingestion import (  # noqa: E402
     extract_python_imports,
     parse_terraform_file,
     parse_helm_chart,
     parse_ci_workflow,
     build_repo_graph,
-    build_infra_graph,
     _file_type,
 )
 

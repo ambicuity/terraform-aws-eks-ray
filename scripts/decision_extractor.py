@@ -43,7 +43,7 @@ SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
 if SCRIPTS_DIR not in sys.path:
     sys.path.insert(0, SCRIPTS_DIR)
 
-from memory_schemas import SCHEMA_VERSION, validate_decision_log, ValidationError
+from memory_schemas import SCHEMA_VERSION, validate_decision_log, ValidationError  # noqa: E402
 
 logging.basicConfig(
     level=logging.INFO,
@@ -87,8 +87,10 @@ def _decision_id(tag_type: str, source: str, index: int) -> str:
     """Generate a deterministic decision ID from tag type, source, and position."""
     raw = f"{tag_type}:{source}:{index}"
     short = hashlib.sha256(raw.encode()).hexdigest()[:8].upper()
-    prefix = {"ARCH_DECISION": "ARCH", "SECURITY_BOUNDARY": "SEC", "PERFORMANCE_CONSTRAINT": "PERF",
-               "PR_DECISION": "PR", "ADR": "ADR"}.get(tag_type, "DEC")
+    prefix = {
+        "ARCH_DECISION": "ARCH", "SECURITY_BOUNDARY": "SEC",
+        "PERFORMANCE_CONSTRAINT": "PERF", "PR_DECISION": "PR", "ADR": "ADR"
+    }.get(tag_type, "DEC")
     return f"{prefix}-{short}"
 
 
@@ -188,7 +190,11 @@ def extract_pr_decisions(pr_number: int, pr_body: str) -> list[dict[str, Any]]:
         tag_type = match.group(1).upper()
         context_text = _scrub_secrets(match.group(2).strip())
         decisions.append({
-            "type": "PR_DECISION" if tag_type not in ("ARCH_DECISION", "SECURITY_BOUNDARY", "PERFORMANCE_CONSTRAINT") else tag_type,
+            "type": (
+                "PR_DECISION"
+                if tag_type not in ("ARCH_DECISION", "SECURITY_BOUNDARY", "PERFORMANCE_CONSTRAINT")
+                else tag_type
+            ),
             "context": context_text,
             "rationale": "",
             "tradeoffs": "",
@@ -245,11 +251,8 @@ def main() -> None:
     existing_decisions = load_existing_decisions(output_path)
     logger.info("Loaded %d existing decisions", len(existing_decisions))
 
-    # Build set of known sources to avoid re-processing unchanged files
-    known_sources: set[str] = {d.get("source", "").split(":")[0] for d in existing_decisions}
-
-    new_decisions: list[dict[str, Any]] = []
     decision_index = 0
+    new_decisions: list[dict] = []
 
     # --- Scan source files for inline tags ---
     for dirpath, dirnames, filenames in os.walk(repo_root):
@@ -289,8 +292,11 @@ def main() -> None:
 
     # Merge: new_decisions fully replaces scanning results; existing PR-only decisions preserved
     # Strategy: keep existing PR_DECISION and ADR records from history, replace inline scan results
-    historical_pr_decisions = [d for d in existing_decisions if d.get("type") in ("PR_DECISION",)
-                                and d.get("source", "").startswith("pr/")]
+    historical_pr_decisions = [
+        d for d in existing_decisions
+        if d.get("type") in ("PR_DECISION",)
+        and d.get("source", "").startswith("pr/")
+    ]
     all_decisions = new_decisions + [
         d for d in historical_pr_decisions
         if not any(n["decision_id"] == d["decision_id"] for n in new_decisions)

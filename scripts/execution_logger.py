@@ -43,8 +43,7 @@ import json
 import logging
 import os
 import sys
-import time
-from dataclasses import asdict, dataclass, field
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Any
 
@@ -52,7 +51,7 @@ SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
 if SCRIPTS_DIR not in sys.path:
     sys.path.insert(0, SCRIPTS_DIR)
 
-from memory_schemas import SCHEMA_VERSION, validate_execution_log, ValidationError
+from memory_schemas import SCHEMA_VERSION, validate_execution_log, ValidationError  # noqa: E402
 
 logger = logging.getLogger(__name__)
 

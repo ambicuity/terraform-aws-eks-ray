@@ -38,7 +38,7 @@ SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
 if SCRIPTS_DIR not in sys.path:
     sys.path.insert(0, SCRIPTS_DIR)
 
-from memory_schemas import (
+from memory_schemas import (  # noqa: E402
     SCHEMA_VERSION,
     validate_repo_graph,
     validate_module_map,

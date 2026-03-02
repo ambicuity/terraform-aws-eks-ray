@@ -27,6 +27,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Set up Gemini CLI
+        uses: ./.github/actions/setup-gemini-cli
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -41,10 +44,10 @@ jobs:
             echo "number=${{ github.event.issue.number }}" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Run Gemini Issue Solver
+      - name: Run Gemini Issue Solver via Gemini CLI
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ISSUE_NUMBER: ${{ steps.issue.outputs.number }}
           GITHUB_REPOSITORY: ${{ github.repository }}
-        run: python scripts/ai_issue_solver.py
+        run: gemini "Run the ai-issue-solver skill on issue #${{ steps.issue.outputs.number }}. You have my permission to execute."

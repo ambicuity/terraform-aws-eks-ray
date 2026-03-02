@@ -20,8 +20,8 @@ import unittest
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO_ROOT, "scripts"))
 
-from memory_retriever import MemoryRetriever, RetrievalResult, cosine_similarity
-from memory_schemas import (
+from memory_retriever import MemoryRetriever, RetrievalResult, cosine_similarity  # noqa: E402
+from memory_schemas import (  # noqa: E402
     SCHEMA_VERSION,
     EMBEDDING_MODEL_NAME,
     EMBEDDING_MODEL_VERSION,

@@ -23,13 +23,13 @@ import unittest
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO_ROOT, "scripts"))
 
-from memory_schemas import (
+from memory_schemas import (  # noqa: E402
     SCHEMA_VERSION,
     EMBEDDING_MODEL_NAME,
     EMBEDDING_MODEL_VERSION,
     EMBEDDING_DIM,
 )
-from validate_memory import (
+from validate_memory import (  # noqa: E402
     check_json_parseability,
     check_schema_validation,
     check_size_budgets,

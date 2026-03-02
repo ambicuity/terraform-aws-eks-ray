@@ -31,14 +31,17 @@ jobs:
           # Full history needed for tag creation
           fetch-depth: 0
 
+      - name: Set up Gemini CLI
+        uses: ./.github/actions/setup-gemini-cli
+
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Run Agent Alpha (Project Lead)
+      - name: Run Agent Alpha (Project Lead) via Gemini CLI
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
-        run: python scripts/alpha_governor.py
+        run: gemini "Run the alpha-governor skill to perform the governance cycle. You have my permission to execute."
