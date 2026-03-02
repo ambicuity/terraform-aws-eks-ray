@@ -38,7 +38,7 @@ SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
 if SCRIPTS_DIR not in sys.path:
     sys.path.insert(0, SCRIPTS_DIR)
 
-from memory_schemas import (
+from memory_schemas import (  # noqa: E402
     SCHEMA_VERSION,
     validate_repo_graph,
     validate_module_map,
@@ -75,7 +75,6 @@ _TF_PROVIDER_RE = re.compile(r'^provider\s+"([^"]+)"', re.MULTILINE)
 _HELM_VERSION_RE = re.compile(r'^version:\s*(.+)', re.MULTILINE)
 _HELM_NAME_RE = re.compile(r'^name:\s*(.+)', re.MULTILINE)
 # CI workflow trigger patterns
-_YML_ON_RE = re.compile(r'^on:\s*$', re.MULTILINE)
 
 
 def _sha256_file(path: str) -> str:
@@ -282,8 +281,8 @@ def build_repo_graph(repo_root: str) -> tuple[list[dict], list[dict], dict]:
             file_size = 0
             try:
                 file_size = os.path.getsize(abs_path)
-            except OSError:
-                pass
+            except OSError as exc:
+                logger.debug("Could not determine file size for %s: %s", abs_path, exc)
 
             ftype = _file_type(abs_path)
             node: dict[str, Any] = {
@@ -365,8 +364,8 @@ def build_module_map(repo_root: str, nodes: list[dict]) -> list[dict]:
                             if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
                                 if not node.name.startswith("_"):
                                     exports.append(node.name)
-                    except (SyntaxError, OSError):
-                        pass
+                    except (SyntaxError, OSError) as exc:
+                        logger.debug("Failed to extract exports from %s: %s", abs_path, exc)
 
         modules.append({
             "name": dir_name,

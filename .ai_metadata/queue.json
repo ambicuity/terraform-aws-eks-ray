@@ -24,6 +24,14 @@
       "brief": "bug: validate_cluster_identity.py crashes on missing kubeconfig",
       "branch": "ai-fix/39",
       "url": "https://github.com/ambicuity/Terraform-Driven-Ray-on-Kubernetes-Platform/issues/39"
+    },
+    {
+      "issue_number": 44,
+      "title": "Test: Verifying Native Gemini CLI Skills",
+      "priority": "medium",
+      "brief": "The gamma_triage.py script is not correctly invoking the new native skill for issue triage. The expected behavior is for Agent Gamma to successfully triage the issue using its newly implemented native skill.",
+      "branch": "ai-fix/44",
+      "url": "https://github.com/ambicuity/Terraform-Driven-Ray-on-Kubernetes-Platform/issues/44"
     }
   ],
   "in_progress": null,

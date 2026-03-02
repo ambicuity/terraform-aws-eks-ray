@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-02-27T19:18:44Z",
+  "generated_at": "2026-03-02T17:15:29Z",
   "terraform": {
     "resources": [
       {
@@ -144,12 +144,6 @@
       {
         "type": "aws_iam_role_policy_attachment",
         "name": "node_AmazonEC2ContainerRegistryReadOnly",
-        "file": "/Users/ritesh/Downloads/submission_folder/fork/Terraform-Driven-Ray-on-Kubernetes-Platform/terraform/main.tf",
-        "depends_on": []
-      },
-      {
-        "type": "aws_iam_policy",
-        "name": "ebs_csi",
         "file": "/Users/ritesh/Downloads/submission_folder/fork/Terraform-Driven-Ray-on-Kubernetes-Platform/terraform/main.tf",
         "depends_on": []
       },

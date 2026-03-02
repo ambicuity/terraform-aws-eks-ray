@@ -9,7 +9,6 @@ deduplication behavior, success weight computation, and recency decay.
 """
 
 import json
-import math
 import os
 import sys
 import tempfile
@@ -18,16 +17,14 @@ import unittest
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO_ROOT, "scripts"))
 
-from execution_logger import (
+from execution_logger import (  # noqa: E402
     ExecutionRecord,
     make_input_hash,
-    make_run_id,
     log_execution,
-    load_execution_history,
     compute_execution_success_weight,
     MAX_RUNS_IN_LOG,
 )
-from memory_retriever import _recency_weight, _parse_iso
+from memory_retriever import _recency_weight  # noqa: E402
 
 
 # ---------------------------------------------------------------------------

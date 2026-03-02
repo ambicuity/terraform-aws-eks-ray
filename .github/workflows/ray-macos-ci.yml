@@ -48,11 +48,11 @@ jobs:
     steps:
       # ── 1: Checkout ─────────────────────────────────────────────────────────
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       # ── 2: Homebrew cache ────────────────────────────────────────────────────
       - name: Cache Homebrew packages
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/Library/Caches/Homebrew
@@ -70,7 +70,7 @@ jobs:
 
       # ── 4: Python setup ──────────────────────────────────────────────────────
       - name: Set up Python 3.11
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.11"
           cache: pip

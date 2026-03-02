@@ -8,7 +8,6 @@ Verifies tag extraction, secret scrubbing, deduplication,
 ADR detection, and PR body decision parsing.
 """
 
-import json
 import os
 import sys
 import tempfile
@@ -17,7 +16,7 @@ import unittest
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO_ROOT, "scripts"))
 
-from decision_extractor import (
+from decision_extractor import (  # noqa: E402
     extract_inline_tags,
     extract_adr_files,
     extract_pr_decisions,

@@ -356,8 +356,8 @@ class MemoryRetriever:
                 for dec in data.get("decisions", []):
                     for rf in dec.get("related_files", []):
                         paths.add(rf)
-            except (json.JSONDecodeError, OSError):
-                pass
+            except (json.JSONDecodeError, OSError) as exc:
+                logger.debug("Failed to extract architecturally relevant paths: %s", exc)
 
         # From execution_log.json retrieved_context_ids (file: prefix)
         exec_log_path = os.path.join(self._memory_dir, "execution_log.json")
@@ -369,8 +369,8 @@ class MemoryRetriever:
                     for ctx_id in run.get("retrieved_context_ids", []):
                         if ctx_id.startswith("file:"):
                             paths.add(ctx_id[5:])
-            except (json.JSONDecodeError, OSError):
-                pass
+            except (json.JSONDecodeError, OSError) as exc:
+                logger.debug("Failed to extract context ids from execution log: %s", exc)
 
         self._arch_paths = paths
         return paths
@@ -417,8 +417,6 @@ class MemoryRetriever:
 
         self._exec_weights = weights
         return weights
-
-
 
     def search_decisions(
         self,

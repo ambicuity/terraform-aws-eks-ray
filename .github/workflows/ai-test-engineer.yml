@@ -23,10 +23,13 @@ jobs:
        github.event.issue.pull_request &&
        contains(github.event.comment.body, '/ai-tests'))
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
+
+      - name: Set up Gemini CLI
+        uses: ./.github/actions/setup-gemini-cli
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.11'
 
@@ -39,10 +42,14 @@ jobs:
             echo "number=${{ github.event.pull_request.number }}" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Run AI Test Engineer
+      - name: Install ONNX Runtime for Semantic Memory
+        run: pip install onnxruntime==1.17.3 numpy>=1.26.0
+
+      - name: Run AI Test Engineer via Gemini CLI
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ steps.pr.outputs.number }}
           GITHUB_REPOSITORY: ${{ github.repository }}
-        run: python scripts/ai_test_engineer.py
+        run: |
+          gemini -y 'Run the ai-test-engineer skill on PR ${{ steps.pr.outputs.number }}. You have my permission to execute.'

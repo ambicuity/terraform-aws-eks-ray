@@ -26,19 +26,28 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           # Full history needed for tag creation
           fetch-depth: 0
 
+      - name: Set up Gemini CLI
+        uses: ./.github/actions/setup-gemini-cli
+
       - name: Set up Python 3.11
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.11'
 
-      - name: Run Agent Alpha (Project Lead)
+      - name: Install ONNX Runtime for Semantic Memory
+        run: pip install onnxruntime==1.17.3 numpy>=1.26.0
+
+      - name: Run Agent Alpha (Project Lead) via Gemini CLI
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
-        run: python scripts/alpha_governor.py
+          GEMINI_MODEL: gemini-2.0-flash
+        run: |
+          gemini -y --model gemini-2.0-flash \
+            'Use the alpha-governor subagent to perform the governance cycle. You have my permission to execute.'

@@ -40,7 +40,7 @@ SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
 if SCRIPTS_DIR not in sys.path:
     sys.path.insert(0, SCRIPTS_DIR)
 
-from memory_schemas import (
+from memory_schemas import (  # noqa: E402
     SCHEMA_VERSION,
     EMBEDDING_MODEL_NAME,
     EMBEDDING_MODEL_VERSION,
@@ -145,7 +145,7 @@ def _chunk_text(text: str, chunk_chars: int = CHUNK_CHARS) -> list[str]:
             # Overlap: keep last 20% of current chunk for context continuity
             overlap_cutoff = max(0, len(current) - max(1, len(current) // 5))
             current = current[overlap_cutoff:]
-            current_len = sum(len(l) for l in current)
+            current_len = sum(len(line_str) for line_str in current)
 
     if current:
         remainder = "".join(current).strip()
@@ -345,7 +345,6 @@ def main() -> None:
     code_files = _collect_files(repo_root, CODE_EXTENSIONS | frozenset([".yml", ".yaml", ".json", ".tf", ".hcl"]))
     updated = _embed_files(code_files, repo_root, existing_hashes, existing_records, model, changed_only)
     # Prune records for files that no longer exist
-    existing_paths = {os.path.join(repo_root, r["file_path"]) for r in updated}
     updated = [r for r in updated if os.path.isfile(os.path.join(repo_root, r["file_path"]))]
     _write_embedding_file(updated, file_embed_path)
 

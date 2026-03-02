@@ -13,7 +13,7 @@ provider "kubernetes" {
 }
 
 module "vpc" {
-  # checkov:skip=CKV_TF_1: Reference standard registry module version
+  # checkov:skip=CKV_TF_1: Version-pinned registry module — commit hash not applicable for public registry sources
   source  = "terraform-aws-modules/vpc/aws"
   version = "5.5.3"
 

@@ -36,10 +36,9 @@ the query embedding in a CI step and cache it, or use the embedding endpoint.
 import argparse
 import json
 import logging
-import math
 import os
 import sys
-from dataclasses import asdict, dataclass, field
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Any
 
@@ -47,8 +46,8 @@ SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
 if SCRIPTS_DIR not in sys.path:
     sys.path.insert(0, SCRIPTS_DIR)
 
-from memory_retriever import MemoryRetriever, RetrievalResult
-from memory_schemas import EMBEDDING_DIM
+from memory_retriever import MemoryRetriever, RetrievalResult  # noqa: E402
+from memory_schemas import EMBEDDING_DIM  # noqa: E402
 
 logging.basicConfig(
     level=logging.INFO,
