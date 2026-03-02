@@ -39,6 +39,9 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Install ONNX Runtime for Semantic Memory
+        run: pip install onnxruntime==1.17.3 numpy>=1.26.0
+
       - name: Run Agent Alpha (Project Lead) via Gemini CLI
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}

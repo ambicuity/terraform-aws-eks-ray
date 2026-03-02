@@ -44,10 +44,8 @@ def main() -> None:
         sys.exit(1)
 
     # 1. Embed Query
+    # This may return None if onnxruntime is missing, which is handled gracefully by MemoryRetriever
     query_vec = embed_query(args.query)
-    if not query_vec:
-        print(json.dumps({"error": "Failed to embed query. ONNX runtime may be unavailable."}))
-        sys.exit(1)
 
     # 2. Retrieve top-k blocks
     retriever = MemoryRetriever()

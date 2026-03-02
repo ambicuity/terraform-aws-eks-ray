@@ -42,6 +42,9 @@ jobs:
             echo "number=${{ github.event.pull_request.number }}" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Install ONNX Runtime for Semantic Memory
+        run: pip install onnxruntime==1.17.3 numpy>=1.26.0
+
       - name: Run AI Test Engineer via Gemini CLI
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}

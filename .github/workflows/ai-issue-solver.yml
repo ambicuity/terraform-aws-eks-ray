@@ -35,6 +35,9 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Install ONNX Runtime for Semantic Memory
+        run: pip install onnxruntime==1.17.3 numpy>=1.26.0
+
       - name: Resolve issue number
         id: issue
         run: |
