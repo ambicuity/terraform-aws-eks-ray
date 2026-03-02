@@ -1,0 +1,82 @@
+# ---------------------------------------------------------------------------
+# docker-compose.yml — Local development environment
+#
+# Services:
+#   test-runner — runs the full pytest suite with coverage output
+#   lint        — runs all linters (flake8, pylint, mypy) and exits
+#
+# Usage:
+#   docker compose up test-runner         # run tests (streams output)
+#   docker compose run --rm lint          # run linters only
+#   docker compose run --rm test-runner pytest tests/test_edge_cases.py -v
+#
+# Environment:
+#   Copy .env.example to .env.local and fill in your secrets.
+#   Required for integration-style tests that hit real APIs:
+#     GEMINI_API_KEY=...
+#     GITHUB_TOKEN=...
+#     GITHUB_REPOSITORY=owner/repo
+#
+# Note: The Python scripts never make real API calls during unit tests —
+# all I/O is mocked. The .env.local file is only needed if you add
+# integration tests that call the live Gemini or GitHub APIs.
+# ---------------------------------------------------------------------------
+
+services:
+  test-runner:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ray-k8s-dev:local
+    container_name: ray_k8s_test_runner
+    volumes:
+      # Mount the project root read-only to reflect live code changes
+      - ./scripts:/app/scripts:ro
+      - ./tests:/app/tests:ro
+      - ./workloads:/app/workloads:ro
+      - ./validation:/app/validation:ro
+      # Mount a writable directory for coverage artifacts
+      - ./reports:/app/reports
+    env_file:
+      - path: .env.local
+        required: false   # Gracefully skipped if file does not exist
+    command: >
+      pytest tests/
+        --tb=short
+        --cov=scripts
+        --cov-report=term-missing
+        --cov-report=xml:/app/reports/coverage.xml
+        --junit-xml=/app/reports/test-results.xml
+        -v
+
+  lint:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ray-k8s-dev:local
+    container_name: ray_k8s_lint
+    volumes:
+      - ./scripts:/app/scripts:ro
+      - ./workloads:/app/workloads:ro
+      - ./validation:/app/validation:ro
+      - ./tests:/app/tests:ro
+    command: >
+      sh -c "
+        echo '--- Running flake8 ---' &&
+        flake8 scripts/ workloads/ validation/ tests/
+          --max-line-length=120
+          --extend-ignore=E203,W503
+          --statistics
+          --count &&
+        echo '--- Running pylint ---' &&
+        pylint scripts/ workloads/
+          --disable=C0114,C0115,C0116,R0903
+          --max-line-length=120
+          --fail-under=7.0 &&
+        echo '--- Running mypy ---' &&
+        mypy scripts/ workloads/
+          --ignore-missing-imports
+          --no-strict-optional
+          --allow-untyped-defs &&
+        echo '✅ All lint checks passed'
+      "

@@ -1,0 +1,20 @@
+# requirements-dev.txt — Python toolchain for local dev & CI
+# These are NOT cluster workload dependencies. See requirements.txt for those.
+#
+# Pinned to exact versions for reproducibility across developer machines,
+# Docker builds, and CI runners.
+
+# Test runner + coverage
+pytest==8.3.4
+pytest-cov==6.0.0
+
+# Linters
+flake8==7.1.1
+pylint==3.3.4
+mypy==1.11.2
+
+# Type stubs
+types-requests
+
+# Needed for mypy type checking of workloads without installing full ray
+numpy

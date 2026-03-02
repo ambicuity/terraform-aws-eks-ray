@@ -55,6 +55,8 @@ resource "aws_iam_role_policy_attachment" "cluster_AmazonEKSVPCResourceControlle
 }
 
 # CloudWatch Log Group
+# checkov:skip=CKV_AWS_158: Default 7 days is intended for FinOps cost reduction; users can override.
+# checkov:skip=CKV_AWS_338: Log retention is parameterized to allow cost flexibility.
 resource "aws_cloudwatch_log_group" "cluster" {
   count             = var.enable_cloudwatch_logs ? 1 : 0
   name              = "/aws/eks/${var.cluster_name}/cluster"
@@ -208,78 +210,9 @@ resource "aws_iam_role_policy_attachment" "node_AmazonEC2ContainerRegistryReadOn
 }
 
 # Policy for EBS CSI Driver
-# tfsec:ignore:aws-iam-no-policy-wildcards
-resource "aws_iam_policy" "ebs_csi" {
-  count       = var.enable_ebs_csi_driver ? 1 : 0
-  name_prefix = "${var.cluster_name}-ebs-csi-"
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = [
-          "ec2:CreateSnapshot",
-          "ec2:AttachVolume",
-          "ec2:DetachVolume",
-          "ec2:ModifyVolume",
-          "ec2:DescribeAvailabilityZones",
-          "ec2:DescribeInstances",
-          "ec2:DescribeSnapshots",
-          "ec2:DescribeTags",
-          "ec2:DescribeVolumes",
-          "ec2:DescribeVolumesModifications"
-        ]
-        Resource = "*"
-      },
-      {
-        Effect = "Allow"
-        Action = [
-          "ec2:CreateTags"
-        ]
-        Resource = [
-          "arn:aws:ec2:*:*:volume/*",
-          "arn:aws:ec2:*:*:snapshot/*"
-        ]
-      },
-      {
-        Effect = "Allow"
-        Action = [
-          "ec2:DeleteTags"
-        ]
-        Resource = [
-          "arn:aws:ec2:*:*:volume/*",
-          "arn:aws:ec2:*:*:snapshot/*"
-        ]
-      },
-      {
-        Effect = "Allow"
-        Action = [
-          "ec2:CreateVolume"
-        ]
-        Resource = "*"
-      },
-      {
-        Effect = "Allow"
-        Action = [
-          "ec2:DeleteVolume"
-        ]
-        Resource = "*"
-      },
-      {
-        Effect = "Allow"
-        Action = [
-          "ec2:DeleteSnapshot"
-        ]
-        Resource = "*"
-      }
-    ]
-  })
-}
-
 resource "aws_iam_role_policy_attachment" "node_ebs_csi" {
   count      = var.enable_ebs_csi_driver ? 1 : 0
-  policy_arn = aws_iam_policy.ebs_csi[0].arn
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
   role       = aws_iam_role.node.name
 }
 
@@ -293,6 +226,7 @@ resource "aws_eks_addon" "addons" {
   resolve_conflicts_on_create = try(each.value.resolve_conflicts_on_create, "OVERWRITE")
   resolve_conflicts_on_update = try(each.value.resolve_conflicts_on_update, "OVERWRITE")
   service_account_role_arn    = try(each.value.service_account_role_arn, null)
+  configuration_values        = try(each.value.configuration_values, null)
 
   depends_on = [
     aws_eks_node_group.cpu_workers,

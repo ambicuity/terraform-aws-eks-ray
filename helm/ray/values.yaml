@@ -94,6 +94,14 @@ cpuWorkers:
     limits:
       cpu: "4"
       memory: "8Gi"
+      
+  volumeMounts:
+    - name: ray-tmp
+      mountPath: /tmp/ray
+      
+  volumes:
+    - name: ray-tmp
+      emptyDir: {}
   
   # Node selector for CPU nodes
   nodeSelector:
@@ -121,6 +129,7 @@ cpuWorkers:
   # Problem #2 Fix: Override injected GCS init container to avoid OOM
   initContainers:
     - name: wait-gcs-ready
+      image: python:3.10-slim
       # Fallback to pure bash/python to avoid 180MB memory footprint of "ray health-check"
       command: ["/bin/sh", "-c"]
       args:
@@ -190,6 +199,15 @@ gpuWorkers:
       cpu: "8"
       memory: "32Gi"
       nvidia.com/gpu: "1"
+      
+  volumeMounts:
+    - name: ray-tmp
+      mountPath: /tmp/ray
+      
+  volumes:
+    - name: ray-tmp
+      emptyDir:
+        medium: Memory
   
   # Node selector for GPU nodes
   nodeSelector:
@@ -222,6 +240,7 @@ gpuWorkers:
   # Problem #2 Fix: Override injected GCS init container to avoid OOM
   initContainers:
     - name: wait-gcs-ready
+      image: python:3.10-slim
       # Fallback to pure bash/python to avoid 180MB memory footprint of "ray health-check"
       command: ["/bin/sh", "-c"]
       args:

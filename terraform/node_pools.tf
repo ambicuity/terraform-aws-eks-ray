@@ -187,7 +187,6 @@ resource "aws_launch_template" "gpu_workers" {
 }
 
 # Cluster Autoscaler IAM Policy
-# tfsec:ignore:aws-iam-no-policy-wildcards
 resource "aws_iam_policy" "cluster_autoscaler" {
   count       = var.enable_cluster_autoscaler ? 1 : 0
   name_prefix = "${var.cluster_name}-autoscaler-"
@@ -213,6 +212,17 @@ resource "aws_iam_policy" "cluster_autoscaler" {
         Action = [
           "autoscaling:SetDesiredCapacity",
           "autoscaling:TerminateInstanceInAutoScalingGroup",
+        ]
+        Resource = "*"
+        Condition = {
+          StringEquals = {
+            "autoscaling:ResourceTag/k8s.io/cluster-autoscaler/${var.cluster_name}" = "owned"
+          }
+        }
+      },
+      {
+        Effect = "Allow"
+        Action = [
           "ec2:DescribeImages",
           "ec2:GetInstanceTypesFromInstanceRequirements",
           "eks:DescribeNodegroup"

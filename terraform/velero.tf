@@ -1,14 +1,13 @@
 # AWS S3 Bucket for Velero Backups
+# checkov:skip=CKV_AWS_144: Cross-region replication doubles storage costs
+# checkov:skip=CKV_AWS_18: Access logging creates unnecessary storage costs for automated backups
+# checkov:skip=CKV_AWS_300: Velero manages the lifecycle and retention of backups natively
+# checkov:skip=CKV2_AWS_61: Lifecycle configuration is managed by Velero naturally
+# checkov:skip=CKV2_AWS_62: Event notifications are unnecessary for automated backups
 resource "aws_s3_bucket" "velero_backups" {
   count  = var.enable_velero ? 1 : 0
   bucket = "${var.cluster_name}-velero-backups-${var.region}"
 
-  # checkov:skip=CKV_AWS_145: KMS encryption incurs per-request costs; AES256 is sufficient for FinOps
-  # checkov:skip=CKV_AWS_144: Cross-region replication doubles storage costs
-  # checkov:skip=CKV_AWS_18: Access logging creates unnecessary storage costs for automated backups
-  # checkov:skip=CKV_AWS_300: Velero manages the lifecycle and retention of backups natively
-  # checkov:skip=CKV2_AWS_61: Lifecycle configuration is managed by Velero naturally
-  # checkov:skip=CKV2_AWS_62: Event notifications are unnecessary for automated backups
   tags = {
     Name        = "${var.cluster_name}-velero-backups-bucket"
     Service     = "Ray"
@@ -24,13 +23,42 @@ resource "aws_s3_bucket_versioning" "velero_backups" {
   }
 }
 
+resource "aws_kms_key" "velero" {
+  count                   = var.enable_velero ? 1 : 0
+  description             = "KMS key for Velero S3 bucket encryption"
+  enable_key_rotation     = true
+  deletion_window_in_days = 7
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "Enable IAM User Permissions"
+        Effect = "Allow"
+        Principal = {
+          AWS = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
+        }
+        Action   = "kms:*"
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+resource "aws_kms_alias" "velero" {
+  count         = var.enable_velero ? 1 : 0
+  name          = "alias/velero-${var.cluster_name}"
+  target_key_id = aws_kms_key.velero[0].key_id
+}
+
 resource "aws_s3_bucket_server_side_encryption_configuration" "velero_backups" {
   count  = var.enable_velero ? 1 : 0
   bucket = aws_s3_bucket.velero_backups[0].id
 
   rule {
     apply_server_side_encryption_by_default {
-      sse_algorithm = "AES256"
+      kms_master_key_id = aws_kms_key.velero[0].arn
+      sse_algorithm     = "aws:kms"
     }
   }
 }
