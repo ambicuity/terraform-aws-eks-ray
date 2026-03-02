@@ -29,6 +29,23 @@ head:
       persistentVolumeClaim:
         claimName: ray-head-storage
   
+  # Problem #1 Fix: Custom readinessProbe to ensure GCS is ready
+  readinessProbe:
+    exec:
+      command: ["ray", "health-check"]
+    initialDelaySeconds: 10
+    periodSeconds: 5
+    timeoutSeconds: 2
+    failureThreshold: 3
+
+  # Problem #1 Fix: Graceful termination to prevent 502s
+  lifecycle:
+    preStop:
+      exec:
+        command: ["/bin/sh", "-c", "ray stop --grace-period=30 && sleep 5"]
+  
+  terminationGracePeriodSeconds: 60
+  
   # Service configuration
   service:
     type: ClusterIP
@@ -77,6 +94,14 @@ cpuWorkers:
     limits:
       cpu: "4"
       memory: "8Gi"
+      
+  volumeMounts:
+    - name: ray-tmp
+      mountPath: /tmp/ray
+      
+  volumes:
+    - name: ray-tmp
+      emptyDir: {}
   
   # Node selector for CPU nodes
   nodeSelector:
@@ -100,6 +125,39 @@ cpuWorkers:
     ray.io/resource-type: cpu
     app: ray
     component: worker
+
+  # Problem #2 Fix: Override injected GCS init container to avoid OOM
+  initContainers:
+    - name: wait-gcs-ready
+      image: python:3.10-slim
+      # Fallback to pure bash/python to avoid 180MB memory footprint of "ray health-check"
+      command: ["/bin/sh", "-c"]
+      args:
+        - |
+          echo "Waiting for GCS to become ready..."
+          python -c "
+          import socket, time, os
+          host = os.environ.get('RAY_IP', 'ray-cluster-head-svc')
+          port = 6379 
+          timeout = 300
+          start = time.time()
+          while time.time() - start < timeout:
+              try:
+                  socket.create_connection((host, port), timeout=2)
+                  print('GCS is reachable.')
+                  exit(0)
+              except Exception:
+                  time.sleep(2)
+          print('GCS not reachable after timeout.')
+          exit(1)
+          "
+      resources:
+        limits:
+          cpu: "100m"
+          memory: "512Mi"
+        requests:
+          cpu: "50m"
+          memory: "128Mi"
   
   # Autoscaling configuration
   autoscaling:
@@ -141,6 +199,15 @@ gpuWorkers:
       cpu: "8"
       memory: "32Gi"
       nvidia.com/gpu: "1"
+      
+  volumeMounts:
+    - name: ray-tmp
+      mountPath: /tmp/ray
+      
+  volumes:
+    - name: ray-tmp
+      emptyDir:
+        medium: Memory
   
   # Node selector for GPU nodes
   nodeSelector:
@@ -169,6 +236,39 @@ gpuWorkers:
     ray.io/resource-type: gpu
     app: ray
     component: gpu-worker
+
+  # Problem #2 Fix: Override injected GCS init container to avoid OOM
+  initContainers:
+    - name: wait-gcs-ready
+      image: python:3.10-slim
+      # Fallback to pure bash/python to avoid 180MB memory footprint of "ray health-check"
+      command: ["/bin/sh", "-c"]
+      args:
+        - |
+          echo "Waiting for GCS to become ready..."
+          python -c "
+          import socket, time, os
+          host = os.environ.get('RAY_IP', 'ray-cluster-head-svc')
+          port = 6379 
+          timeout = 300
+          start = time.time()
+          while time.time() - start < timeout:
+              try:
+                  socket.create_connection((host, port), timeout=2)
+                  print('GCS is reachable.')
+                  exit(0)
+              except Exception:
+                  time.sleep(2)
+          print('GCS not reachable after timeout.')
+          exit(1)
+          "
+      resources:
+        limits:
+          cpu: "100m"
+          memory: "512Mi"
+        requests:
+          cpu: "50m"
+          memory: "128Mi"
   
   # GPU autoscaling
   autoscaling:

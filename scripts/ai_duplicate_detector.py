@@ -11,51 +11,55 @@ to potential duplicates.
 Environment variables required:
   - GEMINI_API_KEY, GITHUB_TOKEN, ISSUE_NUMBER, GITHUB_REPOSITORY
 """
-
-import os
 import sys
 import json
-import time
-import urllib.request
-import urllib.error
-
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
-GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "")
-ISSUE_NUMBER = os.environ.get("ISSUE_NUMBER", "")
-GITHUB_REPOSITORY = os.environ.get("GITHUB_REPOSITORY", "")
-GEMINI_MODEL = "gemini-3-flash-preview"
-
-SYSTEM_PROMPT = """You are analyzing GitHub issues for a Terraform EKS + Ray ML infrastructure project.
-
-Given a NEW issue and a list of EXISTING open issues, determine if the new issue is a duplicate
-or closely related to any existing issue.
-
-Rules:
-1. Only flag duplicates if they are genuinely about the SAME problem or feature request.
-2. "Related" issues that discuss the same component but different aspects are NOT duplicates.
-3. Be conservative — false positives are worse than false negatives.
-
-If you find duplicates, respond in this exact format:
-
-### 🔍 Potential Duplicate(s) Found
-
-| Existing Issue | Similarity | Reason |
-|---|---|---|
-| #<number> — <title> | High/Medium | Brief explanation |
-
-> **Recommendation:** Consider closing this as a duplicate of #<number>, or merging the discussions.
-
-If NO duplicates are found, respond with exactly:
-**✅ No duplicate issues detected.** This issue appears to be unique.
-"""
 
 
-def github_api(url: str) -> dict:
+SYSTEM_PROMPT = (
+    "# Role\n"
+    "You are the duplicate-detection agent for a production Terraform/EKS/Ray repository.\n"
+    "This repository deploys GPU-enabled Ray ML clusters on AWS EKS using Terraform,\n"
+    "KubeRay, Helm, and OPA (Open Policy Agent).\n\n"
+    "# Task\n"
+    "Determine whether the NEW ISSUE is a duplicate of any EXISTING OPEN ISSUE.\n\n"
+    "# Duplicate Criteria (apply all three rules)\n"
+    "An existing issue is a duplicate of the new issue ONLY IF:\n"
+    "  1. Both issues describe the same failure mode OR the same feature request.\n"
+    "     'Same failure mode' means the same component (e.g., EKS autoscaler, KubeRay\n"
+    "     operator, OPA deny policy) fails in the same way (e.g., OOM, misconfiguration,\n"
+    "     API error). Different symptoms in the same component are NOT duplicates.\n"
+    "  2. Both issues describe the same affected component. An issue about\n"
+    "     `helm/ray/values.yaml` and one about `terraform/node_pools.tf` are never\n"
+    "     duplicates even if they both describe 'workers crashing'.\n"
+    "  3. Your confidence that they describe the same root cause is HIGH (>80%).\n"
+    "     If uncertain, do NOT flag as duplicate.\n\n"
+    "# Anti-patterns (these are NOT duplicates)\n"
+    "  - Two issues that mention the same AWS service but describe different failures.\n"
+    "  - A bug report and a feature request for the same component.\n"
+    "  - Two issues with similar titles but describing different error messages.\n\n"
+    "# Output Format (STRICT \u2014 follow exactly)\n\n"
+    "If duplicates found:\n"
+    "### \U0001f50d Potential Duplicate(s) Found\n\n"
+    "| Existing Issue | Similarity | Affected Component | Reason |\n"
+    "|---|---|---|---|\n"
+    "| #<number> \u2014 <title> | High | <exact file or subsystem> | "
+    "<one sentence: same failure mode because...> |\n\n"
+    "> **Recommendation:** Consider closing this as a duplicate of #<number>, "
+    "or merging the discussions if they cover complementary aspects.\n\n"
+    "If NO duplicates found:\n"
+    "**\u2705 No duplicate issues detected.** This issue appears to be unique.\n"
+    "Reason: <one sentence explaining what distinguishes it from the closest existing issue>."
+)
+
+
+def github_api(url: str, token: str) -> dict:
     """Make a GitHub API request."""
+    import urllib.request
+    import urllib.error
     req = urllib.request.Request(
         url,
         headers={
-            "Authorization": f"token {GITHUB_TOKEN}",
+            "Authorization": f"token {token}",
             "Accept": "application/vnd.github.v3+json",
             "User-Agent": "gemini-duplicate-detector",
         },
@@ -68,28 +72,28 @@ def github_api(url: str) -> dict:
         return {}
 
 
-def fetch_all_issues() -> list:
+def fetch_all_issues(repo: str, issue_num: str, token: str) -> list:
     """Fetch all open issues (excluding the new one)."""
     issues: list[dict] = []
     page = 1
     while page <= 5:  # Cap at 5 pages (500 issues)
         url = (
-            f"https://api.github.com/repos/{GITHUB_REPOSITORY}/issues"
+            f"https://api.github.com/repos/{repo}/issues"
             f"?state=open&per_page=100&page={page}"
         )
-        data = github_api(url)
+        data = github_api(url, token)
         if not data or not isinstance(data, list):
             break
         for issue in data:
             # Skip PRs (GitHub API returns PRs as issues too)
             if "pull_request" in issue:
                 continue
-            if str(issue["number"]) != ISSUE_NUMBER:
+            if str(issue["number"]) != issue_num:
                 issues.append({
                     "number": issue["number"],
                     "title": issue["title"],
                     "body": (issue.get("body") or "")[:500],  # Truncate body
-                    "labels": [l["name"] for l in issue.get("labels", [])],
+                    "labels": [label["name"] for label in issue.get("labels", [])],
                 })
         if len(data) < 100:
             break
@@ -97,59 +101,22 @@ def fetch_all_issues() -> list:
     return issues
 
 
-def call_gemini(prompt: str) -> str:
-    """Call Gemini with retry."""
-    payload = {
-        "contents": [{"parts": [{"text": prompt}]}],
-        "generationConfig": {"temperature": 0.2, "maxOutputTokens": 2048},
-    }
-    url = (
-        f"https://generativelanguage.googleapis.com/v1beta/models/"
-        f"{GEMINI_MODEL}:generateContent?key={GEMINI_API_KEY}"
-    )
-
-    for attempt in range(4):
-        req = urllib.request.Request(
-            url,
-            data=json.dumps(payload).encode("utf-8"),
-            headers={"Content-Type": "application/json"},
-            method="POST",
-        )
-        try:
-            with urllib.request.urlopen(req) as resp:
-                result = json.loads(resp.read().decode("utf-8"))
-                candidates = result.get("candidates", [])
-                if candidates:
-                    parts = candidates[0].get("content", {}).get("parts", [])
-                    if parts:
-                        return parts[0].get("text", "")
-                return "Gemini returned an empty response."
-        except urllib.error.HTTPError as e:
-            e.read()
-            if e.code in (429, 500, 503) and attempt < 3:
-                delay = [10, 30, 60][attempt]
-                print(f"Gemini {e.code} — retry in {delay}s...", file=sys.stderr)
-                time.sleep(delay)
-                continue
-            return f"⚠️ Gemini API error: {e.code}"
-
-    return "⚠️ Gemini API failed after retries."
-
-
-def post_comment(body: str) -> None:
+def post_comment(body: str, issue_number: str, repo: str, token: str) -> None:
     """Post the duplicate analysis as an issue comment."""
+    import urllib.request
+    import urllib.error
     comment = (
         "## 🔍 Duplicate Issue Scan\n\n"
         f"{body}\n\n"
         "---\n"
         "*Automated scan by Gemini AI Duplicate Detector.*"
     )
-    url = f"https://api.github.com/repos/{GITHUB_REPOSITORY}/issues/{ISSUE_NUMBER}/comments"
+    url = f"https://api.github.com/repos/{repo}/issues/{issue_number}/comments"
     req = urllib.request.Request(
         url,
         data=json.dumps({"body": comment}).encode("utf-8"),
         headers={
-            "Authorization": f"token {GITHUB_TOKEN}",
+            "Authorization": f"token {token}",
             "Accept": "application/vnd.github.v3+json",
             "Content-Type": "application/json",
             "User-Agent": "gemini-duplicate-detector",
@@ -167,23 +134,26 @@ def post_comment(body: str) -> None:
 
 def main() -> None:
     """Main entry point."""
-    for var in ["GEMINI_API_KEY", "GITHUB_TOKEN", "ISSUE_NUMBER", "GITHUB_REPOSITORY"]:
-        if not os.environ.get(var):
-            print(f"Missing: {var}", file=sys.stderr)
-            sys.exit(1)
+    from gh_utils import require_env, GeminiClient, GEMINI_MODEL_FLASH
 
-    print(f"Scanning for duplicates of issue #{ISSUE_NUMBER}...")
+    env = require_env("GEMINI_API_KEY", "GITHUB_TOKEN", "ISSUE_NUMBER", "GITHUB_REPOSITORY")
+    issue_number = env["ISSUE_NUMBER"]
+    github_repository = env["GITHUB_REPOSITORY"]
+    github_token = env["GITHUB_TOKEN"]
+
+    print(f"Scanning for duplicates of issue #{issue_number}...")
 
     # Fetch the new issue
     new_issue = github_api(
-        f"https://api.github.com/repos/{GITHUB_REPOSITORY}/issues/{ISSUE_NUMBER}"
+        f"https://api.github.com/repos/{github_repository}/issues/{issue_number}",
+        github_token,
     )
     if not new_issue:
         print("Failed to fetch new issue.", file=sys.stderr)
         sys.exit(1)
 
     # Fetch existing issues
-    existing = fetch_all_issues()
+    existing = fetch_all_issues(github_repository, issue_number, github_token)
     print(f"Found {len(existing)} existing open issues to compare against.")
 
     if not existing:
@@ -207,10 +177,13 @@ def main() -> None:
     )
 
     print("Sending to Gemini for analysis...")
-    result = call_gemini(prompt)
+    gemini = GeminiClient(env["GEMINI_API_KEY"], model=GEMINI_MODEL_FLASH)
+    result = gemini.generate(prompt)
+    if not result:
+        result = "⚠️ Gemini API failed to generate a response (e.g., due to rate limits or safety blocks)."
     print(f"Result: {len(result)} chars")
 
-    post_comment(result)
+    post_comment(result, issue_number, github_repository, github_token)
 
 
 if __name__ == "__main__":
