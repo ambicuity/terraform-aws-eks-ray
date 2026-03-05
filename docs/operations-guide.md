@@ -198,18 +198,6 @@ terraform plan -destroy -out=destroy.tfplan
 terraform apply destroy.tfplan
 ```
 
-### Orphaned AWS Resource Scan
-
-Use the `aws-cleanup.yml` workflow to scan for orphaned AWS resources after
-Terraform destroy or drift remediation. The workflow is report-only: it opens
-an issue with any findings and does not delete infrastructure.
-
-```bash
-# Via GitHub Actions (manual dispatch)
-gh workflow run aws-cleanup.yml
-```
-
-
 ---
 
 ## Troubleshooting
