@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: Provisioned Velero for AWS S3 automated cluster backups and DRS (#17)
 - feat: Tuned KubeRay autoscaler idleTimeout down to 30s for FinOps (#17)
 
-- ### Chore
+ ### Chore
 - Removed unused placeholder files `scripts/fix_issue_33.py` and `tests/test_issue_33.py`
 
 ## [Unreleased] - Phase 2.1
