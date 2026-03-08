@@ -11,7 +11,7 @@ pytest-cov==6.0.0
 # Linters
 flake8==7.1.1
 pylint==3.3.4
-mypy==1.11.2
+mypy==1.19.1
 
 # Type stubs
 types-requests
