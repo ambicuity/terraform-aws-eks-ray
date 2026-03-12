@@ -64,7 +64,14 @@ jobs:
       # ── 3: Install CLI tools via Homebrew ───────────────────────────────────
       - name: Install minikube, helm
         run: |
-          brew install minikube helm || true
+          if ! brew list --versions minikube >/dev/null; then
+            brew install minikube
+          fi
+          if ! brew list --versions helm >/dev/null; then
+            brew install helm
+          fi
+          brew link --overwrite minikube
+          brew link --overwrite helm
           minikube version
           helm version --short
 

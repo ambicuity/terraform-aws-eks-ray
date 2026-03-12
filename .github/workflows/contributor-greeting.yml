@@ -17,8 +17,8 @@ jobs:
     steps:
       - uses: actions/first-interaction@v3
         with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          issue-message: |
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          issue_message: |
             Welcome to **Terraform-Driven Ray on Kubernetes** 👋
 
             Thanks for opening your first issue! We appreciate your interest in the project.
@@ -27,7 +27,7 @@ jobs:
             - 📖 Check the [README](https://github.com/${{ github.repository }}#readme) for setup instructions
             - 🏗️ Review the [Architecture Diagram](https://github.com/${{ github.repository }}#architecture)
             - 💬 Feel free to add more context if needed
-          pr-message: |
+          pr_message: |
             Welcome to **Terraform-Driven Ray on Kubernetes** 🎉
 
             Thanks for your first pull request! We're excited to review your contribution.

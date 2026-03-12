@@ -132,7 +132,7 @@ def extract_python_imports(path: str) -> list[str]:
 # Terraform parsing
 # ---------------------------------------------------------------------------
 
-def parse_terraform_file(path: str) -> tuple[list[dict], list[dict], list[str]]:
+def parse_terraform_file(path: str) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[str]]:
     """
     Parse a .tf file and return (resources, modules, providers).
     All parsing uses regex — no HCL parser required.
@@ -143,11 +143,11 @@ def parse_terraform_file(path: str) -> tuple[list[dict], list[dict], list[str]]:
     except OSError:
         return [], [], []
 
-    resources = [
+    resources: list[dict[str, Any]] = [
         {"type": m.group(1), "name": m.group(2), "file": path, "depends_on": []}
         for m in _TF_RESOURCE_RE.finditer(content)
     ]
-    modules = [
+    modules: list[dict[str, Any]] = [
         {"name": m.group(1), "source": m.group(2), "file": path}
         for m in _TF_MODULE_RE.finditer(content)
     ]
@@ -257,7 +257,7 @@ def parse_ci_workflow(path: str) -> dict[str, Any] | None:
 # Main ingestion runner
 # ---------------------------------------------------------------------------
 
-def build_repo_graph(repo_root: str) -> tuple[list[dict], list[dict], dict]:
+def build_repo_graph(repo_root: str) -> tuple[list[dict[str, Any]], list[dict[str, Any]], dict[str, int]]:
     """Walk repo and build node list and import edges."""
     nodes: list[dict] = []
     edges: list[dict] = []
@@ -360,10 +360,10 @@ def build_module_map(repo_root: str, nodes: list[dict]) -> list[dict]:
                         with open(abs_path, encoding="utf-8", errors="replace") as fh:
                             src = fh.read()
                         tree = ast.parse(src)
-                        for node in ast.walk(tree):
-                            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
-                                if not node.name.startswith("_"):
-                                    exports.append(node.name)
+                        for ast_node in ast.walk(tree):
+                            if isinstance(ast_node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                                if not ast_node.name.startswith("_"):
+                                    exports.append(ast_node.name)
                     except (SyntaxError, OSError) as exc:
                         logger.debug("Failed to extract exports from %s: %s", abs_path, exc)
 

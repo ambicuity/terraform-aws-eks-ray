@@ -170,7 +170,7 @@ def main() -> None:
         f"{SYSTEM_PROMPT}\n\n"
         f"--- NEW ISSUE ---\n"
         f"#{new_issue['number']}: {new_issue['title']}\n"
-        f"Labels: {', '.join(l['name'] for l in new_issue.get('labels', []))}\n"
+        f"Labels: {', '.join(label['name'] for label in new_issue.get('labels', []))}\n"
         f"Body:\n{(new_issue.get('body') or 'No description')[:1000]}\n"
         f"--- END NEW ISSUE ---\n\n"
         f"--- EXISTING OPEN ISSUES ---\n{existing_str}\n--- END ---"

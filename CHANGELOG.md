@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: Provisioned Velero for AWS S3 automated cluster backups and DRS (#17)
 - feat: Tuned KubeRay autoscaler idleTimeout down to 30s for FinOps (#17)
 
+### Fixed
+- docs: Clarified that `aws-cleanup.yml` performs a report-only orphaned-resource scan rather than infrastructure teardown.
+- ci: Repaired PR automation for contributor greetings, release drafting, and Apple Silicon validation while fixing typing issues in repository tooling.
+
 ## [Unreleased] - Phase 2.1
 ### Added
 - MIT License headers to all operational scripts.

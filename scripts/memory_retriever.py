@@ -164,6 +164,8 @@ class MemoryRetriever:
         self._memory_dir = os.path.abspath(memory_dir)
         self._corpora: dict[str, list[dict]] = {}  # source_type -> loaded records
         self._loaded: set[str] = set()
+        self._arch_paths: set[str] | None = None
+        self._exec_weights: dict[str, float] | None = None
 
     def _load_corpus(self, source_type: str) -> list[dict]:
         """Lazy-load and cache a single embedding file."""
@@ -343,8 +345,8 @@ class MemoryRetriever:
         These receive the 0.1 architectural_relevance boost in weighted scoring.
         Cached after first call.
         """
-        if hasattr(self, "_arch_paths"):
-            return self._arch_paths  # type: ignore[return-value]
+        if self._arch_paths is not None:
+            return self._arch_paths
 
         paths: set[str] = set()
         # From decision_log.json related_files
@@ -373,7 +375,7 @@ class MemoryRetriever:
                 logger.debug("Failed to extract context ids from execution log: %s", exc)
 
         self._arch_paths = paths
-        return paths
+        return self._arch_paths
 
     def _load_execution_success_weights(self) -> dict[str, float]:
         """
@@ -382,21 +384,21 @@ class MemoryRetriever:
         0.5 = no history (neutral prior).
         Cached after first call.
         """
-        if hasattr(self, "_exec_weights"):
-            return self._exec_weights  # type: ignore[return-value]
+        if self._exec_weights is not None:
+            return self._exec_weights
 
         weights: dict[str, float] = {}
         exec_log_path = os.path.join(self._memory_dir, "execution_log.json")
         if not os.path.isfile(exec_log_path):
             self._exec_weights = weights
-            return weights
+            return self._exec_weights
 
         try:
             with open(exec_log_path, encoding="utf-8") as fh:
                 data = json.load(fh)
         except (json.JSONDecodeError, OSError):
             self._exec_weights = weights
-            return weights
+            return self._exec_weights
 
         # Count successes and total uses per file context reference
         total_uses: dict[str, int] = {}
@@ -416,7 +418,7 @@ class MemoryRetriever:
             weights[file_path] = success_uses.get(file_path, 0) / total if total > 0 else 0.5
 
         self._exec_weights = weights
-        return weights
+        return self._exec_weights
 
     def search_decisions(
         self,

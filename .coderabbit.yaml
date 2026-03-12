@@ -1,7 +1,7 @@
 language: "en-US"
 reviews:
   # The profile configures the persona of the reviewer
-  profile: "Senior Principal Engineer"
+  profile: "assertive"
   
   # Tone and style
   tone: "Professional, Authoritative, Constructive"
