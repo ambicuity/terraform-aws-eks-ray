@@ -14,7 +14,7 @@ on:
       - main
 
 # Only trigger for failures - check in the workflow body
-if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+if: ${{ startsWith(secrets.COPILOT_GITHUB_TOKEN, 'github_pat_') && github.event.workflow_run.conclusion == 'failure' }}
 
 permissions: read-all
 

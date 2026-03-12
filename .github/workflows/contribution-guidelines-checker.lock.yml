@@ -28,7 +28,7 @@
 #
 # Source: githubnext/agentics/workflows/contribution-guidelines-checker.md@346204513ecfa08b81566450d7d599556807389f
 #
-# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"d310c3ec261cb2db57a3ad3ce86bc322fc62c30976213716c1cd6f9d38e37c0e","compiler_version":"v0.57.2","strict":true}
+# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"edb8617ac0cb54848818d73e6c359bf3fae02f8753e67ccfe10a0bf29be7bdc4","compiler_version":"v0.57.2","strict":true}
 
 name: "Contribution Guidelines Checker"
 "on":
@@ -49,7 +49,8 @@ jobs:
   activation:
     needs: pre_activation
     if: >
-      (needs.pre_activation.outputs.activated == 'true') && ((github.event_name != 'pull_request') || (github.event.pull_request.head.repo.id == github.repository_id))
+      (needs.pre_activation.outputs.activated == 'true') && ((${{ startsWith(secrets.COPILOT_GITHUB_TOKEN, 'github_pat_') }}) &&
+      ((github.event_name != 'pull_request') || (github.event.pull_request.head.repo.id == github.repository_id)))
     runs-on: ubuntu-slim
     permissions:
       contents: read
@@ -1119,7 +1120,9 @@ jobs:
             await main();
 
   pre_activation:
-    if: (github.event_name != 'pull_request') || (github.event.pull_request.head.repo.id == github.repository_id)
+    if: >
+      (${{ startsWith(secrets.COPILOT_GITHUB_TOKEN, 'github_pat_') }}) && ((github.event_name != 'pull_request') ||
+      (github.event.pull_request.head.repo.id == github.repository_id))
     runs-on: ubuntu-slim
     outputs:
       activated: ${{ steps.check_membership.outputs.is_team_member == 'true' }}

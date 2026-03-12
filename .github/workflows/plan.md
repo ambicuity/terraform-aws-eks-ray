@@ -7,6 +7,8 @@ on:
     name: plan
     events: [issue_comment, discussion_comment]
 
+if: ${{ startsWith(secrets.COPILOT_GITHUB_TOKEN, 'github_pat_') }}
+
 permissions:
   contents: read
   discussions: read
