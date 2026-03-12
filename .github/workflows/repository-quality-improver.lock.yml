@@ -25,7 +25,7 @@
 #
 # Source: githubnext/agentics/workflows/repository-quality-improver.md@346204513ecfa08b81566450d7d599556807389f
 #
-# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"049b213dddcb3cd6f81e0a467941421d2fdb47d61ad6147ad26d6cf695748b5c","compiler_version":"v0.57.2","strict":true}
+# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"1048be64fffdfc12a6ce4f6a291beaecb307ca9b1026f855f58872d469f5adf3","compiler_version":"v0.57.2","strict":true}
 
 name: "Repository Quality Improver"
 "on":
@@ -43,7 +43,6 @@ run-name: "Repository Quality Improver"
 
 jobs:
   activation:
-    if: ${{ startsWith(secrets.COPILOT_GITHUB_TOKEN, 'github_pat_') }}
     runs-on: ubuntu-slim
     permissions:
       contents: read

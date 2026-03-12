@@ -25,7 +25,7 @@
 #
 # Source: githubnext/agentics/workflows/plan.md@346204513ecfa08b81566450d7d599556807389f
 #
-# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"21417f45ae7e3111620a82d8e6b54ccc9435328f8b20e14e4effd6b4655c8911","compiler_version":"v0.57.2","strict":true}
+# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"38875a887954524598e6e0ae12df727236aef5baf5fa960124fe3b159c5b0e46","compiler_version":"v0.57.2","strict":true}
 
 name: "Plan Command"
 "on":
@@ -48,7 +48,10 @@ run-name: "Plan Command"
 jobs:
   activation:
     needs: pre_activation
-    if: (needs.pre_activation.outputs.activated == 'true') && (startsWith(secrets.COPILOT_GITHUB_TOKEN, 'github_pat_'))
+    if: >
+      (needs.pre_activation.outputs.activated == 'true') && ((github.event_name == 'issue_comment') && (((startsWith(github.event.comment.body, '/plan ')) ||
+      (github.event.comment.body == '/plan')) && (github.event.issue.pull_request == null)) || (github.event_name == 'discussion_comment') &&
+      ((startsWith(github.event.comment.body, '/plan ')) || (github.event.comment.body == '/plan')))
     runs-on: ubuntu-slim
     permissions:
       contents: read
@@ -1181,7 +1184,10 @@ jobs:
             await main();
 
   pre_activation:
-    if: ${{ startsWith(secrets.COPILOT_GITHUB_TOKEN, 'github_pat_') }}
+    if: >
+      (github.event_name == 'issue_comment') && (((startsWith(github.event.comment.body, '/plan ')) || (github.event.comment.body == '/plan')) &&
+      (github.event.issue.pull_request == null)) || (github.event_name == 'discussion_comment') && ((startsWith(github.event.comment.body, '/plan ')) ||
+      (github.event.comment.body == '/plan'))
     runs-on: ubuntu-slim
     outputs:
       activated: ${{ (steps.check_membership.outputs.is_team_member == 'true') && (steps.check_command_position.outputs.command_position_ok == 'true') }}

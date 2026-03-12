@@ -9,8 +9,6 @@ on:
   schedule: weekly on monday
   workflow_dispatch:
 
-if: ${{ startsWith(secrets.COPILOT_GITHUB_TOKEN, 'github_pat_') }}
-
 permissions:
   contents: read
   issues: read

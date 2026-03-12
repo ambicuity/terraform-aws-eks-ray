@@ -4,9 +4,6 @@ description: Weekly analysis of repository quality focused on actionable mainten
 on:
   schedule: weekly on wednesday
   workflow_dispatch:
-
-if: ${{ startsWith(secrets.COPILOT_GITHUB_TOKEN, 'github_pat_') }}
-
 permissions:
   contents: read
   actions: read

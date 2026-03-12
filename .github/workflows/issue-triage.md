@@ -11,8 +11,6 @@ on:
     types: [opened, reopened]
   reaction: eyes
 
-if: ${{ startsWith(secrets.COPILOT_GITHUB_TOKEN, 'github_pat_') }}
-
 permissions: read-all
 
 network: defaults

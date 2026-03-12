@@ -28,7 +28,7 @@
 #
 # Source: githubnext/agentics/workflows/daily-repo-status.md@346204513ecfa08b81566450d7d599556807389f
 #
-# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"fd13151a35382ade91730467dc8acef9243fc6dc9d85f12ee018117d04c8d3b7","compiler_version":"v0.57.2","strict":true}
+# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"fe4f797b3bd5b6cdd34421523a4aebd8e46a4c73b0fadb51117032658a1a854d","compiler_version":"v0.57.2","strict":true}
 
 name: "Weekly Repo Status"
 "on":
@@ -46,7 +46,6 @@ run-name: "Weekly Repo Status"
 
 jobs:
   activation:
-    if: ${{ startsWith(secrets.COPILOT_GITHUB_TOKEN, 'github_pat_') }}
     runs-on: ubuntu-slim
     permissions:
       contents: read
