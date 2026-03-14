@@ -72,10 +72,10 @@ jobs:
               fi
             }
 
-            infra="$(matches '^(terraform/|policies/|\\.tflint\\.hcl$)')"
+            infra="$(matches '^(terraform/|policies/|\.tflint\.hcl$)')"
             app="$(matches '^(helm/|workloads/|validation/)')"
-            automation="$(matches '^(scripts/|tests/|\\.coderabbit\\.yaml$|\\.github/workflows/|\\.gitattributes$)')"
-            docs="$(matches '^(README\\.md$|CONTRIBUTING\\.md$|SECURITY\\.md$|ROADMAP\\.md$|CHANGELOG\\.md$|DEPLOYMENT\\.md$|IMPLEMENTATION_SUMMARY\\.md$|docs/|\\.github/copilot-instructions\\.md$|\\.github/pull_request_template\\.md$|\\.github/ISSUE_TEMPLATE/|\\.github/DISCUSSION_TEMPLATE/)')"
+            automation="$(matches '^(scripts/|tests/|\.coderabbit\.yaml$|\.github/workflows/|\.gitattributes$)')"
+            docs="$(matches '^(README\.md$|CONTRIBUTING\.md$|SECURITY\.md$|ROADMAP\.md$|CHANGELOG\.md$|DEPLOYMENT\.md$|IMPLEMENTATION_SUMMARY\.md$|docs/|\.github/copilot-instructions\.md$|\.github/pull_request_template\.md$|\.github/ISSUE_TEMPLATE/|\.github/DISCUSSION_TEMPLATE/)')"
           fi
 
           {
