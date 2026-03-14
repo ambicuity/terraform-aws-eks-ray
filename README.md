@@ -8,7 +8,7 @@ This repository provides a production-oriented AWS EKS platform for running Ray 
 
 - `terraform/` provisions the core EKS platform and worker node groups.
 - `helm/ray/` renders a deployable `RayCluster` chart for KubeRay.
-- `terraform/examples/complete/` shows the addon/workload layer: Cluster Autoscaler, KubeRay, the Ray chart, and optional Velero.
+- `terraform/examples/complete/` shows the addon and workload layer: Cluster Autoscaler, KubeRay, the Ray chart, and optional Velero.
 - `policies/` keeps a small Terraform-focused OPA ruleset.
 - `validation/` and `local_test.sh` exercise the real chart-backed local path.
 
@@ -18,7 +18,7 @@ This repository provides a production-oriented AWS EKS platform for running Ray 
 - GPU workloads are safe-by-default for Spot-heavy clusters: when the primary GPU pool uses `SPOT`, the module also creates a small On-Demand fallback pool unless you explicitly disable it.
 - The launch templates described in the docs are now actually attached to the node groups.
 - The Helm chart is a real chart with renderable templates, not just a values file.
-- The repo keeps only lightweight advisory AI surfaces (`CodeRabbit`, `Gemini Code Assist`, `Copilot` instructions). Merge gates remain deterministic.
+- The repo keeps only lightweight advisory AI surfaces. Merge gates remain deterministic.
 
 ## Quick Start
 
@@ -38,15 +38,15 @@ module "ray_eks_cluster" {
   cpu_node_max_size     = 10
   cpu_node_desired_size = 3
 
-  enable_gpu_nodes                 = true
-  gpu_capacity_type                = "SPOT"
-  enable_gpu_ondemand_fallback     = true
-  gpu_ondemand_fallback_max_size   = 1
+  enable_gpu_nodes                   = true
+  gpu_capacity_type                  = "SPOT"
+  enable_gpu_ondemand_fallback       = true
+  gpu_ondemand_fallback_max_size     = 1
   gpu_ondemand_fallback_desired_size = 0
 }
 ```
 
-Use `terraform/examples/complete/` when you also want the addon/workload layer.
+Use `terraform/examples/complete/` when you also want the addon and workload layer.
 
 ## Local Validation
 
@@ -60,13 +60,15 @@ make test
 ./local_test.sh
 ```
 
-`local_test.sh` now installs the real `helm/ray` chart on top of KubeRay in minikube instead of validating an inline throwaway manifest.
+`local_test.sh` installs the real `helm/ray` chart on top of KubeRay in minikube instead of validating an inline throwaway manifest.
+
+Optional review surfaces are CodeRabbit, Gemini Code Assist on GitHub, and official GitHub Agentic Workflows. They are advisory only. Merge gates remain deterministic through `CI`, `CodeQL`, and `Gitleaks`.
 
 ## Runtime Notes
 
 - Spot GPU capacity is cost-efficient, but it is not treated as inherently reliable anymore. The default posture is Spot primary plus an On-Demand fallback node group.
 - The core module still provisions EKS managed addons such as `vpc-cni`, `kube-proxy`, and `coredns`; it does not deploy Ray, KubeRay, Cluster Autoscaler, or Velero.
-- Velero is available only in the example/addon layer.
+- Velero is available only in the example and addon layer.
 
 ## Documentation
 

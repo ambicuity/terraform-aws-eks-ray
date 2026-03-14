@@ -39,3 +39,19 @@ pytest tests -q
 - Spot GPU changes should keep the On-Demand fallback story explicit
 - Docs should describe the root module as infra-only
 - AI metadata is advisory only and should not become a merge gate
+
+## Pull Requests
+
+- Use a Conventional Commit title
+- Describe what changed, why it changed, and how you tested it
+- Use CodeRabbit, Gemini Code Assist on GitHub, or official GitHub Agentic Workflows only if you want optional advisory feedback
+
+## AI Policy
+
+The supported AI surfaces are advisory only:
+
+- CodeRabbit
+- Gemini Code Assist on GitHub
+- official GitHub Agentic Workflows
+
+Do not reintroduce repo-owned autonomous PR bots or custom hidden agent runtimes.

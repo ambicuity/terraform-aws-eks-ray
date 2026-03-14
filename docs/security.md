@@ -11,7 +11,7 @@
 - Kubernetes secrets are encrypted with KMS
 - Launch templates require IMDSv2
 - Root volumes are encrypted gp3
-- Worker node groups are private-subnet oriented and rely on upstream NAT/egress controls
+- Worker node groups are private-subnet oriented and rely on upstream NAT and egress controls
 - OPA policies enforce a small set of Terraform-aligned guardrails
 
 ## Spot GPU Policy
@@ -31,6 +31,9 @@ The repo keeps only advisory AI review surfaces:
 
 - CodeRabbit
 - Gemini Code Assist on GitHub
+- official GitHub Agentic Workflows
 - repository-level Copilot instructions
+
+Repository workflows use the short-lived `GITHUB_TOKEN` with least-privilege permissions and do not rely on repo-owned AI workflows, custom Gemini CLI credentials, or long-lived GitHub application keys for normal execution.
 
 These are not merge gates. Required merge gates are deterministic CI, CodeQL, and Gitleaks.

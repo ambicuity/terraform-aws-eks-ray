@@ -21,6 +21,6 @@ The repository `CI` workflow mirrors this split and only runs the relevant jobs 
 
 ## Optional review tools
 
-CodeRabbit and Gemini Code Assist on GitHub are available if you want advisory feedback, but they are optional and not part of the merge gate.
+CodeRabbit, Gemini Code Assist on GitHub, and official GitHub Agentic Workflows are available if you want advisory feedback, but they are optional and not part of the merge gate.
 
 For the longer contributor guide, see [`docs/contributing.md`](docs/contributing.md).
