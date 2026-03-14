@@ -1,12 +1,12 @@
 data "aws_caller_identity" "current" {}
 
 # AWS S3 Bucket for Velero Backups
-# checkov:skip=CKV_AWS_144: Cross-region replication is an environment-level decision, not a default in the example.
-# checkov:skip=CKV_AWS_18: Access logging is omitted for the example to keep the addon footprint focused.
-# checkov:skip=CKV_AWS_300: Retention is handled by Velero schedules and backup TTL.
-# checkov:skip=CKV2_AWS_61: Lifecycle rules vary per environment and are left to consumers.
-# checkov:skip=CKV2_AWS_62: Event notifications are not required for Velero backups.
 resource "aws_s3_bucket" "velero_backups" {
+  # checkov:skip=CKV_AWS_144: Cross-region replication is an environment-level decision, not a default in the example.
+  # checkov:skip=CKV_AWS_18: Access logging is omitted for the example to keep the addon footprint focused.
+  # checkov:skip=CKV_AWS_300: Retention is handled by Velero schedules and backup TTL.
+  # checkov:skip=CKV2_AWS_61: Lifecycle rules vary per environment and are left to consumers.
+  # checkov:skip=CKV2_AWS_62: Event notifications are not required for Velero backups.
   count  = var.enable_velero ? 1 : 0
   bucket = "${var.cluster_name}-velero-backups-${var.region}"
 

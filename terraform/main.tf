@@ -1,5 +1,6 @@
 # Security Group for EKS Nodes
 resource "aws_security_group" "node" {
+  # checkov:skip=CKV_AWS_382: EKS worker nodes need outbound access to AWS APIs, image registries, and cluster dependencies; operators are expected to constrain egress with NAT, routing, and network controls.
   name_prefix = "${var.cluster_name}-node-"
   description = "Security group for EKS worker nodes"
   vpc_id      = var.vpc_id

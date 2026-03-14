@@ -62,7 +62,7 @@ make test
 
 `local_test.sh` installs the real `helm/ray` chart on top of KubeRay in minikube instead of validating an inline throwaway manifest.
 
-Optional review surfaces are CodeRabbit, Gemini Code Assist on GitHub, and official GitHub Agentic Workflows. They are advisory only. Merge gates remain deterministic through `CI`, `CodeQL`, and `Gitleaks`.
+Optional review surfaces are CodeRabbit and Gemini Code Assist on GitHub. They are advisory only. Merge gates remain deterministic through `CI`, `CodeQL`, and `Gitleaks`.
 
 ## Runtime Notes
 

@@ -31,7 +31,6 @@ The repo keeps only advisory AI review surfaces:
 
 - CodeRabbit
 - Gemini Code Assist on GitHub
-- official GitHub Agentic Workflows
 - repository-level Copilot instructions
 
 Repository workflows use the short-lived `GITHUB_TOKEN` with least-privilege permissions and do not rely on repo-owned AI workflows, custom Gemini CLI credentials, or long-lived GitHub application keys for normal execution.

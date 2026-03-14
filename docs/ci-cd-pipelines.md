@@ -56,8 +56,7 @@ Automation:
 | `gitleaks.yml` | PR, push | secret scanning |
 | `drift-detection.yml` | schedule, manual | Terraform drift detection via AWS OIDC |
 | `stale.yml` | schedule, manual | stale issue and PR management |
-| `assignment-followup.yml` | schedule, manual | nudges assigned issues without linked open PRs |
 
 ## Advisory AI Surfaces
 
-The repo keeps only advisory AI metadata and GitHub app integrations. CodeRabbit, Gemini Code Assist on GitHub, and official GitHub Agentic Workflows are optional helpers, not merge gates, and there are no repo-owned autonomous issue or PR bots in the maintained workflow set.
+The repo keeps only advisory AI metadata and GitHub app integrations. CodeRabbit and Gemini Code Assist on GitHub are optional helpers, not merge gates, and there are no repo-owned autonomous issue or PR bots in the maintained workflow set.

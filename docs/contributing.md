@@ -44,7 +44,7 @@ pytest tests -q
 
 - Use a Conventional Commit title
 - Describe what changed, why it changed, and how you tested it
-- Use CodeRabbit, Gemini Code Assist on GitHub, or official GitHub Agentic Workflows only if you want optional advisory feedback
+- Use CodeRabbit or Gemini Code Assist on GitHub only if you want optional advisory feedback
 
 ## AI Policy
 
@@ -52,6 +52,5 @@ The supported AI surfaces are advisory only:
 
 - CodeRabbit
 - Gemini Code Assist on GitHub
-- official GitHub Agentic Workflows
 
 Do not reintroduce repo-owned autonomous PR bots or custom hidden agent runtimes.
