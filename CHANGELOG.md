@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 ## [Unreleased]
 
+### Chore
+
+- removed unused placeholder files `scripts/fix_issue_33.py` and `tests/test_issue_33.py`
+
 ### Changed
 
 - replaced the custom Gemini CLI agent stack with CodeRabbit, Gemini Code Assist on GitHub, and official GitHub Agentic Workflows
