@@ -1,4 +1,4 @@
-# ROADMAP.md — Terraform-Driven Ray on Kubernetes Platform
+# ROADMAP.md — terraform-aws-eks-ray
 
 ## Current Version: v1.0.0
 
@@ -12,7 +12,7 @@
 | Velero backup integration | Done |
 | OPA guardrails | Done |
 | Ray HA and GCS stability fixes | Done |
-| Grafana dashboards | Done |
+| Grafana dashboards | In Progress |
 
 ## Milestone 2 — Repository Automation Hardening
 
@@ -33,13 +33,15 @@
 |---|---|
 | Further separation of infra and workload delivery concerns | In Progress |
 | Branch protection and required-check cleanup | Done |
-| Release automation aligned to pinned tags | Planned |
+| Release automation aligned to pinned tags | Done |
 | Additional workload validation depth | Planned |
+| Karpenter alternative autoscaler support | Planned |
 
 ## Milestone 4 — Multi-Cloud and Advanced MLOps
 
 | Feature | Status |
 |---|---|
+| Karpenter as first-class autoscaler option | Planned |
 | GKE support via provider abstraction | Planned |
 | AKS support | Planned |
 | Ray Serve integration and ingress templates | Planned |

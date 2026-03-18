@@ -46,7 +46,7 @@ resource "aws_eks_node_group" "cpu_workers" {
   cluster_name    = aws_eks_cluster.main.name
   node_group_name = "${var.cluster_name}-cpu-workers"
   node_role_arn   = aws_iam_role.node.arn
-  subnet_ids      = var.subnet_ids
+  subnet_ids      = var.worker_node_subnet_ids
   instance_types  = var.cpu_node_instance_types
   ami_type        = "AL2023_ARM_64_STANDARD"
 
@@ -146,7 +146,7 @@ resource "aws_eks_node_group" "gpu_workers" {
   cluster_name    = aws_eks_cluster.main.name
   node_group_name = "${var.cluster_name}-gpu-workers"
   node_role_arn   = aws_iam_role.node.arn
-  subnet_ids      = var.subnet_ids
+  subnet_ids      = var.worker_node_subnet_ids
   instance_types  = var.gpu_node_instance_types
   ami_type        = "AL2_x86_64_GPU"
 
@@ -209,7 +209,7 @@ resource "aws_eks_node_group" "gpu_ondemand_fallback" {
   cluster_name    = aws_eks_cluster.main.name
   node_group_name = "${var.cluster_name}-gpu-ondemand-fallback"
   node_role_arn   = aws_iam_role.node.arn
-  subnet_ids      = var.subnet_ids
+  subnet_ids      = var.worker_node_subnet_ids
   instance_types  = var.gpu_ondemand_fallback_instance_types
   ami_type        = "AL2_x86_64_GPU"
 

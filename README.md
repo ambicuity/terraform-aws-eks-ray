@@ -1,40 +1,32 @@
-# Terraform-Driven Ray on Kubernetes Platform
+# terraform-aws-eks-ray
 
-[![CI](https://github.com/ambicuity/Terraform-Driven-Ray-on-Kubernetes-Platform/actions/workflows/ci.yml/badge.svg)](https://github.com/ambicuity/Terraform-Driven-Ray-on-Kubernetes-Platform/actions/workflows/ci.yml)
-[![CodeQL](https://github.com/ambicuity/Terraform-Driven-Ray-on-Kubernetes-Platform/actions/workflows/codeql.yml/badge.svg)](https://github.com/ambicuity/Terraform-Driven-Ray-on-Kubernetes-Platform/actions/workflows/codeql.yml)
-[![Gitleaks](https://github.com/ambicuity/Terraform-Driven-Ray-on-Kubernetes-Platform/actions/workflows/gitleaks.yml/badge.svg)](https://github.com/ambicuity/Terraform-Driven-Ray-on-Kubernetes-Platform/actions/workflows/gitleaks.yml)
+[![CI](https://github.com/ambicuity/terraform-aws-eks-ray/actions/workflows/ci.yml/badge.svg)](https://github.com/ambicuity/terraform-aws-eks-ray/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/ambicuity/terraform-aws-eks-ray/actions/workflows/codeql.yml/badge.svg)](https://github.com/ambicuity/terraform-aws-eks-ray/actions/workflows/codeql.yml)
+[![Gitleaks](https://github.com/ambicuity/terraform-aws-eks-ray/actions/workflows/gitleaks.yml/badge.svg)](https://github.com/ambicuity/terraform-aws-eks-ray/actions/workflows/gitleaks.yml)
 
-This repository provides a production-oriented AWS EKS platform for running Ray workloads, with a clear separation between infrastructure and workload deployment:
+Production-grade Terraform module for AWS EKS clusters optimized for Ray ML workloads. Supports GPU Spot-first node groups with On-Demand fallback, IRSA-based service accounts, and KubeRay operator deployments.
 
-- `terraform/` provisions the core EKS platform and worker node groups.
-- `helm/ray/` renders a deployable `RayCluster` chart for KubeRay.
-- `terraform/examples/complete/` shows the addon and workload layer: Cluster Autoscaler, KubeRay, the Ray chart, and optional Velero.
-- `policies/` keeps a small Terraform-focused OPA ruleset.
-- `tests/evidence/` is the committed local evidence hub for supported claims and saved terminal output.
-- `validation/` and `local_test.sh` exercise the real chart-backed local path.
+## Notable Features
 
-## What Changed
-
-- The root Terraform module is now infra-only. It no longer creates Helm releases or Velero resources.
-- GPU workloads are safe-by-default for Spot-heavy clusters: when the primary GPU pool uses `SPOT`, the module also creates a small On-Demand fallback pool unless you explicitly disable it.
-- The launch templates described in the docs are now actually attached to the node groups.
-- The Helm chart is a real chart with renderable templates, not just a values file.
-- The repository now keeps a committed local evidence bundle under `tests/evidence/`.
-- The repo keeps only lightweight advisory AI surfaces. Merge gates remain deterministic.
+- **Spot-first GPU with On-Demand fallback** — GPU pools default to Spot capacity with an automatic On-Demand fallback group, unless explicitly disabled.
+- **Infra-only module** — The root module provisions the EKS platform only. Workload deployment (KubeRay, Ray charts, Velero) is composed separately in `examples/complete/`.
+- **Evidence-based validation** — all security and scaling claims are backed by a committed proof bundle under `tests/evidence/`, auditable via `make evidence`.
+- **OPA cost governance** — Rego policies block expensive GPU instance families and cap total node scale.
 
 ## Quick Start
 
-Use the root module only for platform infrastructure:
+### Infrastructure Only
 
 ```hcl
 module "ray_eks_cluster" {
-  source = "git::https://github.com/ambicuity/Terraform-Driven-Ray-on-Kubernetes-Platform.git//terraform?ref=v1.0.0"
+  source = "git::https://github.com/ambicuity/terraform-aws-eks-ray.git//terraform?ref=v1.0.0"
 
   cluster_name = "production-ray-cluster"
   region       = "us-east-1"
 
   vpc_id     = "vpc-0abcd1234efgh5678"
-  subnet_ids = ["subnet-0123456789abcdef0", "subnet-0123456789abcdef1"]
+  control_plane_subnet_ids = ["subnet-0123456789abcdef0", "subnet-0123456789abcdef1"]
+  worker_node_subnet_ids   = ["subnet-0123456789abcdef0", "subnet-0123456789abcdef1"]
 
   cpu_node_min_size     = 2
   cpu_node_max_size     = 10
@@ -48,45 +40,36 @@ module "ray_eks_cluster" {
 }
 ```
 
-Use `terraform/examples/complete/` when you also want the addon and workload layer.
+### Full Platform (with addons)
+
+Use [`examples/complete/`](examples/complete/) to compose the infrastructure module with Cluster Autoscaler, KubeRay operator, the Ray Helm chart, and optional Velero backups.
 
 ## Local Validation
 
-Terraform `>= 1.6.0` is required for the module test suite. The repository also includes a bundled binary at `.tmp-tools/bin/terraform-1.9.8` for local validation on machines with older installs.
-
-Recommended checks:
+Terraform `>= 1.6.0` is required. The repo also bundles `.tmp-tools/bin/terraform-1.9.8` for local use.
 
 ```bash
-make evidence
+make evidence    # Full evidence bundle: lint, test, claim audit, local cluster validation
+make lint        # Deterministic static checks only
+make test        # Terraform and Python tests only
 ```
-
-`make evidence` runs the deterministic checks, audits the supported claims, runs the chart-backed `./local_test.sh` harness, and saves the terminal output in `tests/evidence/`.
-
-If you only want the faster deterministic subset first:
-
-```bash
-make lint
-make test
-```
-
-Optional review surfaces are CodeRabbit and Gemini Code Assist on GitHub. They are advisory only. Merge gates remain deterministic through `CI`, `CodeQL`, and `Gitleaks`.
-
-## Runtime Notes
-
-- Spot GPU capacity is cost-efficient, but it is not treated as inherently reliable anymore. The default posture is Spot primary plus an On-Demand fallback node group.
-- The core module still provisions EKS managed addons such as `vpc-cni`, `kube-proxy`, and `coredns`; it does not deploy Ray, KubeRay, Cluster Autoscaler, or Velero.
-- Velero is available only in the example and addon layer.
 
 ## Documentation
 
-- [Architecture](docs/architecture.md)
-- [Terraform Module Reference](docs/terraform-module.md)
-- [Autoscaling](docs/autoscaling.md)
-- [Operations Guide](docs/operations-guide.md)
-- [Security](docs/security.md)
-- [CI/CD Pipelines](docs/ci-cd-pipelines.md)
-- [Contributing](docs/contributing.md)
-- [Terraform Module README](terraform/README.md)
-- [Validation Runbook](validation/README.md)
-- [Claim Matrix](tests/evidence/claim-matrix.md)
-- [Latest Local Evidence Summary](tests/evidence/SUMMARY.md)
+| Document | Description |
+|----------|-------------|
+| [Architecture](docs/architecture.md) | Diagram and dataflow for how Ray and EKS interact |
+| [Terraform Module Reference](docs/terraform-module.md) | Inputs, outputs, and behavior notes for the root module |
+| [Autoscaling](docs/autoscaling.md) | Platform and workload scaling layers, Spot GPU reliability guidance |
+| [Operations Guide](docs/operations-guide.md) | Day-1 deploy and day-2 troubleshooting |
+| [Security](docs/security.md) | IAM roles, IRSA, KMS, and RBAC hardening |
+| [CI/CD Pipelines](docs/ci-cd-pipelines.md) | Path-scoped CI, required checks, advisory AI surfaces |
+| [Deployment Guide](DEPLOYMENT.md) | Step-by-step from `terraform apply` to running Ray workloads |
+| [Contributing](docs/contributing.md) | How to contribute, code style, PR expectations |
+| [Terraform Registry](docs/terraform-registry.md) | How to publish this module to the Terraform Registry |
+
+| [Validation Runbook](validation/README.md) | Live-cluster validation scripts |
+| [Claim Matrix](tests/evidence/claim-matrix.md) | Auditable claims with cross-references to proof paths |
+| [Latest Evidence Summary](tests/evidence/SUMMARY.md) | Status of the latest local evidence run |
+| [Changelog](CHANGELOG.md) | Version history and notable changes |
+| [Roadmap](ROADMAP.md) | Current milestones and planned features |

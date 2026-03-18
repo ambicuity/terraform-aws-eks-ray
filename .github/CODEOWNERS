@@ -1,0 +1,29 @@
+# Default reviewers for all changes
+* @ambicuity
+
+# Infrastructure (Terraform)
+/terraform/ @ambicuity
+/policies/ @ambicuity
+.tflint.hcl @ambicuity
+
+# Workload layer (Helm, validation, workloads)
+/helm/ @ambicuity
+/workloads/ @ambicuity
+/validation/ @ambicuity
+
+# CI/CD and automation
+/.github/ @ambicuity
+/scripts/ @ambicuity
+/tests/ @ambicuity
+Makefile @ambicuity
+Dockerfile @ambicuity
+docker-compose.yml @ambicuity
+
+# Documentation
+/docs/ @ambicuity
+README.md @ambicuity
+CHANGELOG.md @ambicuity
+DEPLOYMENT.md @ambicuity
+CONTRIBUTING.md @ambicuity
+SECURITY.md @ambicuity
+ROADMAP.md @ambicuity

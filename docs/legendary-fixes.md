@@ -30,7 +30,7 @@ This document lists only the mitigations that are implemented in the repository 
 
 **Implemented mitigation:**
 
-- `terraform/main.tf` splits the OIDC provider into managed and unmanaged resources.
+- `main.tf` splits the OIDC provider into managed and unmanaged resources.
 - The unmanaged path uses `ignore_changes = [thumbprint_list]` so AWS-populated thumbprints do not create churn by default.
 
 **Local proof:** `make test` and `python3 tests/evidence/check_supported_claims.py`

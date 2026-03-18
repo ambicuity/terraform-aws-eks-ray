@@ -13,7 +13,7 @@ Repository root: /Users/ritesh/Downloads/submission_folder/fork/Terraform-Driven
 [ok] docker available at /opt/homebrew/bin/docker
 [ok] using bundled terraform at .tmp-tools/bin/terraform-1.9.8
 [ok] using bundled opa at .tmp-tools/bin/opa-0.63.0
-[version] python3: Python 3.13.5
+[version] python3: Python 3.14.3
 [version] helm: v4.1.1+g5caf004
 [version] kubectl: clientVersion:
 [version] minikube: minikube version: v1.38.1
@@ -21,7 +21,7 @@ Repository root: /Users/ritesh/Downloads/submission_folder/fork/Terraform-Driven
 [version] shellcheck: ShellCheck - shell script analysis tool
 [version] bundled terraform: Terraform v1.9.8
 [version] bundled opa: Version: 0.63.0
-[ok] colima is already running
+[note] colima is installed but not running; local_test.sh will start it if needed
 Bootstrap complete.
 
 # Exit code: 0

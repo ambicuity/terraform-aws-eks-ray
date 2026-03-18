@@ -1,6 +1,6 @@
 # Contributing Guidelines
 
-Thanks for contributing to **Terraform-Driven Ray on Kubernetes Platform**.
+Thanks for contributing to **terraform-aws-eks-ray**.
 
 ## Workflow
 

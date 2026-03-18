@@ -2,9 +2,9 @@
 
 The repository now has a deliberate boundary:
 
-- `terraform/` provisions platform infrastructure only.
+- The root module provisions platform infrastructure only.
 - `helm/ray/` defines the Ray workload.
-- `terraform/examples/complete/` is the place where the platform and workload layers are composed together.
+- `examples/complete/` is the place where the platform and workload layers are composed together.
 
 ## Core Platform
 
@@ -31,7 +31,7 @@ It does not provision:
 ### CPU workers
 
 - Default capacity: `ON_DEMAND`
-- Instance families: `m6g.*`
+- Instance families: `m5.*`
 - Launch template attached for IMDSv2, encrypted gp3 root volumes, and bootstrap userdata
 
 ### GPU workers

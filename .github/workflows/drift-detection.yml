@@ -62,13 +62,13 @@ jobs:
 
       - name: Terraform Init
         if: steps.preflight.outputs.configured == 'true'
-        working-directory: terraform
+        working-directory: .
         run: terraform init
 
       - name: Terraform Plan (Detailed Exit Code)
         id: plan
         if: steps.preflight.outputs.configured == 'true'
-        working-directory: terraform
+        working-directory: .
         run: |
           set +e
           terraform plan -detailed-exitcode -out=drift.binary
@@ -83,7 +83,7 @@ jobs:
 
       - name: Run Drift Detector Script
         if: steps.plan.outputs.exit_code == '2'
-        run: python3 scripts/drift_detector.py terraform/drift.json
+        run: python3 scripts/drift_detector.py drift.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}

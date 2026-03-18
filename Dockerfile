@@ -21,8 +21,8 @@
 FROM python:3.11-slim AS base
 
 LABEL maintainer="ambicuity"
-LABEL description="Test runner and lint environment for the Terraform-Driven-Ray-on-Kubernetes-Platform"
-LABEL org.opencontainers.image.source="https://github.com/ambicuity/Terraform-Driven-Ray-on-Kubernetes-Platform"
+LABEL description="Test runner and lint environment for terraform-aws-eks-ray"
+LABEL org.opencontainers.image.source="https://github.com/ambicuity/terraform-aws-eks-ray"
 
 # Security: run as a non-root user
 RUN groupadd --gid 1001 appgroup && \

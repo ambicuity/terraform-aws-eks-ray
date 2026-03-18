@@ -42,8 +42,13 @@ variable "vpc_id" {
   type        = string
 }
 
-variable "subnet_ids" {
-  description = "List of subnet IDs to deploy the EKS cluster and worker nodes into (preferably private subnets)"
+variable "control_plane_subnet_ids" {
+  description = "List of subnet IDs for the EKS Control Plane ENIs (preferably isolated private subnets)"
+  type        = list(string)
+}
+
+variable "worker_node_subnet_ids" {
+  description = "List of subnet IDs for the EKS Worker Nodes (preferably isolated private subnets)"
   type        = list(string)
 }
 
@@ -98,7 +103,7 @@ variable "eks_addons" {
 variable "cpu_node_instance_types" {
   description = "Instance types for CPU worker nodes"
   type        = list(string)
-  default     = ["m6g.xlarge", "m6g.2xlarge"]
+  default     = ["m5.xlarge", "m5.2xlarge"]
 }
 
 variable "cpu_node_min_size" {
@@ -273,6 +278,6 @@ variable "tags" {
     ManagedBy   = "Terraform"
     Environment = "production"
     Service     = "Ray-ML-Platform"
-    Repository  = "Terraform-Driven-Ray-on-Kubernetes-Platform"
+    Repository  = "terraform-aws-eks-ray"
   }
 }

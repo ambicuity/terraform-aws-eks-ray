@@ -18,7 +18,7 @@ help: ## Show this help message
 
 lint: ## Run deterministic static checks (Terraform fmt, Helm, Actions, shell)
 	@echo "--- Terraform fmt ---"
-	@$(TERRAFORM) fmt -check -recursive terraform/
+	@$(TERRAFORM) fmt -check -recursive .
 	@echo "--- Helm lint ---"
 	@helm lint helm/ray
 	@echo "--- Helm render ---"
@@ -34,12 +34,12 @@ lint: ## Run deterministic static checks (Terraform fmt, Helm, Actions, shell)
 
 test: ## Run local validation and tests
 	@echo "--- Terraform root ---"
-	@$(TERRAFORM) -chdir=terraform init -backend=false
-	@$(TERRAFORM) -chdir=terraform validate
-	@$(TERRAFORM) -chdir=terraform test
+	@$(TERRAFORM) -chdir=. init -backend=false
+	@$(TERRAFORM) -chdir=. validate
+	@$(TERRAFORM) -chdir=. test
 	@echo "--- Terraform example ---"
-	@$(TERRAFORM) -chdir=terraform/examples/complete init -backend=false
-	@$(TERRAFORM) -chdir=terraform/examples/complete validate
+	@$(TERRAFORM) -chdir=examples/complete init -backend=false
+	@$(TERRAFORM) -chdir=examples/complete validate
 	@echo "--- Python tests ---"
 	@pytest tests/ -q
 
@@ -47,10 +47,10 @@ evidence: ## Generate the committed local evidence bundle
 	@bash tests/evidence/run_local_evidence.sh
 
 validate: ## Validate Terraform root and example stacks
-	@$(TERRAFORM) -chdir=terraform init -backend=false
-	@$(TERRAFORM) -chdir=terraform validate
-	@$(TERRAFORM) -chdir=terraform/examples/complete init -backend=false
-	@$(TERRAFORM) -chdir=terraform/examples/complete validate
+	@$(TERRAFORM) -chdir=. init -backend=false
+	@$(TERRAFORM) -chdir=. validate
+	@$(TERRAFORM) -chdir=examples/complete init -backend=false
+	@$(TERRAFORM) -chdir=examples/complete validate
 
 clean: ## Clean up temporary files
 	@find . -type d -name ".terraform" -exec rm -rf {} +

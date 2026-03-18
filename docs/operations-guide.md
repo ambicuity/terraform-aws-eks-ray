@@ -24,7 +24,7 @@ terraform apply
 For the composed addon/workload stack:
 
 ```bash
-cd terraform/examples/complete
+cd examples/complete
 terraform init
 terraform plan
 terraform apply

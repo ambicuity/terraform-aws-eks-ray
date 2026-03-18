@@ -20,6 +20,6 @@ This is the place to look if you want to keep infrastructure and workload deploy
 ## Validate
 
 ```bash
-./.tmp-tools/bin/terraform-1.9.8 -chdir=terraform/examples/complete init -backend=false
-./.tmp-tools/bin/terraform-1.9.8 -chdir=terraform/examples/complete validate
+./.tmp-tools/bin/terraform-1.9.8 -chdir=examples/complete init -backend=false
+./.tmp-tools/bin/terraform-1.9.8 -chdir=examples/complete validate
 ```

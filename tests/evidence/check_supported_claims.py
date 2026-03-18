@@ -73,8 +73,8 @@ def make_result(claim: str, evidence: str, passed: bool, detail: str) -> ClaimRe
 
 
 def audit_launch_templates() -> ClaimResult:
-    node_pools = read_text("terraform/node_pools.tf")
-    module_tests = read_text("terraform/module.tftest.hcl")
+    node_pools = read_text("node_pools.tf")
+    module_tests = read_text("module.tftest.hcl")
 
     cpu_block = extract_block(node_pools, r'resource "aws_eks_node_group" "cpu_workers"\s*{')
     gpu_block = extract_block(node_pools, r'resource "aws_eks_node_group" "gpu_workers"\s*{')
@@ -92,14 +92,14 @@ def audit_launch_templates() -> ClaimResult:
 
     return make_result(
         "Launch templates are attached to the managed node groups.",
-        "terraform/node_pools.tf + terraform/module.tftest.hcl",
+        "node_pools.tf + module.tftest.hcl",
         passed,
         "CPU, primary GPU, and fallback GPU node groups all declare launch templates and Terraform tests assert the CPU and primary GPU attachments.",
     )
 
 
 def audit_spot_fallback() -> ClaimResult:
-    module_tests = read_text("terraform/module.tftest.hcl")
+    module_tests = read_text("module.tftest.hcl")
     policy_tests = read_text("policies/terraform_test.rego")
 
     passed = all(
@@ -113,14 +113,14 @@ def audit_spot_fallback() -> ClaimResult:
 
     return make_result(
         "Spot GPU mode keeps an On-Demand fallback path.",
-        "terraform/module.tftest.hcl + policies/terraform_test.rego",
+        "module.tftest.hcl + policies/terraform_test.rego",
         passed,
         "Terraform module tests assert the fallback node group and OPA tests deny a Spot-only GPU plan without it.",
     )
 
 
 def audit_oidc_thumbprint() -> ClaimResult:
-    main_tf = read_text("terraform/main.tf")
+    main_tf = read_text("main.tf")
 
     managed_block = extract_block(
         main_tf,
@@ -141,7 +141,7 @@ def audit_oidc_thumbprint() -> ClaimResult:
 
     return make_result(
         "OIDC thumbprint drift is handled explicitly.",
-        "terraform/main.tf",
+        "main.tf",
         passed,
         "The module keeps separate managed and unmanaged OIDC provider resources and ignores AWS-populated thumbprint drift on the unmanaged path.",
     )

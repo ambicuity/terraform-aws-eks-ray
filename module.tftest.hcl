@@ -3,10 +3,11 @@ mock_provider "aws" {}
 mock_provider "tls" {}
 
 variables {
-  cluster_name = "test-cluster"
-  region       = "us-east-1"
-  vpc_id       = "vpc-12345"
-  subnet_ids   = ["subnet-12345", "subnet-67890"]
+  cluster_name             = "test-cluster"
+  region                   = "us-east-1"
+  vpc_id                   = "vpc-12345"
+  control_plane_subnet_ids = ["subnet-12345", "subnet-67890"]
+  worker_node_subnet_ids   = ["subnet-12345", "subnet-67890"]
 }
 
 run "spot_primary_creates_fallback" {

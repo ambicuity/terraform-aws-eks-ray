@@ -12,7 +12,7 @@ resource "helm_release" "cluster_autoscaler" {
   repository = "https://kubernetes.github.io/autoscaler"
   chart      = "cluster-autoscaler"
   namespace  = "kube-system"
-  version    = "9.32.0" # Example version for K8s 1.28 compatibility
+  version    = "9.43.2" # Compatible with K8s 1.31
   wait       = true
   timeout    = 300
 

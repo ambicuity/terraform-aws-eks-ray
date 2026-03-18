@@ -6,15 +6,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 ## [Unreleased]
 
-### Chore
+### Added
 
-- removed unused placeholder files `scripts/fix_issue_33.py` and `tests/test_issue_33.py`
+- `terraform/backend.tf.example` with documented S3 + DynamoDB remote state pattern
+- `.github/CODEOWNERS` for review routing
+- `docs/terraform-registry.md` — how to publish to the Terraform Registry
+- `release-please` workflow and config for automated semver releases
+- `terraform-docs` workflow for auto-generated module reference
+- Karpenter alternative section in autoscaling documentation
 
 ### Changed
 
+- refactored `README.md` to value-prop-first structure with annotated docs table
 - replaced the custom Gemini CLI agent stack with a smaller automation model centered on deterministic CI plus optional CodeRabbit and Gemini review tools
 - collapsed fragmented CI checks into one path-scoped required `CI` workflow
 - pinned public Terraform module examples to `v1.0.0`
+- updated Cluster Autoscaler Helm chart to v9.43.2 for K8s 1.31 compatibility
+- corrected ROADMAP: Grafana dashboards status changed from "Done" to "In Progress"
 
 ### Removed
 
@@ -22,6 +30,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 - custom AI workflows (`gamma-triage`, `delta-executor`, `beta-reviewer`, `alpha-governor`, and related helpers)
 - redundant standalone CI workflows that duplicated the required router
 - assignment follow-up and slash-command automation in favor of a lower-noise maintainer workflow set
+
+### Chore
+
+- removed unused placeholder files `scripts/fix_issue_33.py` and `tests/test_issue_33.py`
 
 ### Documentation
 

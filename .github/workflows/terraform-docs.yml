@@ -1,0 +1,36 @@
+name: Terraform Docs
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "variables.tf"
+      - "outputs.tf"
+      - "main.tf"
+      - "node_pools.tf"
+      - "versions.tf"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  terraform-docs:
+    name: Generate module docs
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      - name: Render terraform-docs
+        uses: terraform-docs/gh-actions@v1.3.0
+        with:
+          working-dir: .
+          output-file: README.md
+          output-method: inject
+          git-push: "true"
+          git-commit-message: "docs: auto-generate terraform module reference"

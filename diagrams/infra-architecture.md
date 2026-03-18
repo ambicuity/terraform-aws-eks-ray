@@ -7,7 +7,7 @@ Complete end-to-end architecture from code to deployed infrastructure.
 │                         GitHub Repository                           │
 │                                                                     │
 │  ├── .github/workflows/        ← GitHub Actions orchestration      │
-│  ├── terraform/                ← Infrastructure as Code            │
+│  ├── *.tf                      ← Infrastructure as Code            │
 │  ├── helm/ray/                 ← Ray configuration                 │
 │  ├── policies/                 ← OPA governance policies           │
 │  └── workloads/                ← ML training jobs                  │

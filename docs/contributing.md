@@ -2,7 +2,7 @@
 
 ## Principles
 
-- Keep infrastructure changes in `terraform/`
+- Keep infrastructure changes at the root module
 - Keep workload changes in `helm/` or the example stack
 - Preserve path-scoped CI behavior
 - Do not reintroduce repo-owned autonomous bot workflows
@@ -31,8 +31,8 @@ Faster deterministic subset only:
 ./.tmp-tools/bin/terraform-1.9.8 -chdir=terraform init -backend=false
 ./.tmp-tools/bin/terraform-1.9.8 -chdir=terraform validate
 ./.tmp-tools/bin/terraform-1.9.8 -chdir=terraform test
-./.tmp-tools/bin/terraform-1.9.8 -chdir=terraform/examples/complete init -backend=false
-./.tmp-tools/bin/terraform-1.9.8 -chdir=terraform/examples/complete validate
+./.tmp-tools/bin/terraform-1.9.8 -chdir=examples/complete init -backend=false
+./.tmp-tools/bin/terraform-1.9.8 -chdir=examples/complete validate
 ./.tmp-tools/bin/opa-0.63.0 test policies -v
 helm lint helm/ray
 helm template ray-ci helm/ray >/tmp/ray-rendered.yaml

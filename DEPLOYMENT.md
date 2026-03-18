@@ -70,7 +70,8 @@ terraform init
 # 2. Review the plan (no real resources created)
 terraform plan \
   -var="vpc_id=vpc-0abc123456def" \
-  -var='subnet_ids=["subnet-0abc1","subnet-0abc2"]' \
+  -var='control_plane_subnet_ids=["subnet-0abc1","subnet-0abc2"]' \
+  -var='worker_node_subnet_ids=["subnet-0abc1","subnet-0abc2"]' \
   -var="cluster_name=my-ray-cluster" \
   -out=tfplan
 
@@ -84,7 +85,8 @@ Key variables to configure:
 |---|---|---|
 | `cluster_name` | `ray-ml-cluster` | Must be globally unique per AWS account |
 | `vpc_id` | — | **Required**. Bring your own VPC |
-| `subnet_ids` | — | **Required**. Private subnets recommended |
+| `control_plane_subnet_ids` | — | **Required**. Private subnets recommended |
+| `worker_node_subnet_ids` | — | **Required**. Private subnets recommended |
 | `enable_gpu_nodes` | `true` | Set `false` to skip GPU node group (saves cost) |
 | `gpu_capacity_type` | `SPOT` | Use `ON_DEMAND` for non-preemptible workloads |
 | `gpu_node_min_size` | `0` | Scale-to-zero by default |
@@ -188,7 +190,7 @@ Apply the tracked ruleset with the GitHub CLI:
 ```bash
 gh api \
   --method PUT \
-  repos/ambicuity/Terraform-Driven-Ray-on-Kubernetes-Platform/rulesets/13113148 \
+  repos/ambicuity/terraform-aws-eks-ray/rulesets/13113148 \\
   --input update_ruleset.json
 ```
 
@@ -200,7 +202,8 @@ gh api \
 cd terraform
 terraform destroy \
   -var="vpc_id=vpc-0abc123456def" \
-  -var='subnet_ids=["subnet-0abc1","subnet-0abc2"]'
+  -var='control_plane_subnet_ids=["subnet-0abc1","subnet-0abc2"]' \
+  -var='worker_node_subnet_ids=["subnet-0abc1","subnet-0abc2"]'
 ```
 
 > **Warning:** This destroys all cluster resources permanently. Velero backups in S3 are retained per your S3 lifecycle policy.

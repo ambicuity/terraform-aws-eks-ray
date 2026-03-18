@@ -1,6 +1,6 @@
 # Terraform Module Reference
 
-The root module in `terraform/` provisions the EKS platform. It intentionally does not deploy Helm workloads or Velero.
+The root module provisions the EKS platform. It intentionally does not deploy Helm workloads or Velero.
 
 ## Requirements
 
@@ -17,7 +17,8 @@ Core:
 - `cluster_name`
 - `region`
 - `vpc_id`
-- `subnet_ids`
+- `control_plane_subnet_ids`
+- `worker_node_subnet_ids`
 - `kubernetes_version`
 - `enable_oidc_thumbprint_management`
 
@@ -61,7 +62,7 @@ Removed from the root module:
 - `velero_backup_schedule`
 - Velero-specific outputs
 
-Those concerns now live in `terraform/examples/complete/`.
+Those concerns now live in `examples/complete/`.
 
 ## Important Outputs
 
@@ -82,7 +83,7 @@ Those concerns now live in `terraform/examples/complete/`.
 - The root module attaches the documented launch templates to the EKS node groups.
 - When `gpu_capacity_type = "SPOT"` and `enable_gpu_ondemand_fallback = true`, an additional On-Demand fallback GPU node group is created automatically.
 - The module still creates EKS managed addons because they are platform infrastructure, not application workloads.
-- Workload deployment belongs in `helm/ray/` or `terraform/examples/complete/`.
+- Workload deployment belongs in `helm/ray/` or `examples/complete/`.
 
 ## Local Commands
 

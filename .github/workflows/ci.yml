@@ -72,7 +72,7 @@ jobs:
               fi
             }
 
-            infra="$(matches '^(terraform/|policies/|\.tflint\.hcl$)')"
+            infra="$(matches '^(\\.tflint\\.hcl$|.*\\.tf(vars)?$)')"
             app="$(matches '^(helm/|workloads/|validation/)')"
             automation="$(matches '^(scripts/|tests/|\.coderabbit\.yaml$|\.github/workflows/|\.gitattributes$)')"
             docs="$(matches '^(README\.md$|CONTRIBUTING\.md$|SECURITY\.md$|ROADMAP\.md$|CHANGELOG\.md$|DEPLOYMENT\.md$|IMPLEMENTATION_SUMMARY\.md$|docs/|\.github/copilot-instructions\.md$|\.github/pull_request_template\.md$|\.github/ISSUE_TEMPLATE/|\.github/DISCUSSION_TEMPLATE/)')"
@@ -128,31 +128,31 @@ jobs:
           pip install checkov==3.2.358
 
       - name: Terraform format check
-        run: terraform fmt -check -recursive terraform/
+        run: terraform fmt -check -recursive .
 
       - name: Terraform validate root module
-        working-directory: terraform
+        working-directory: .
         run: |
           terraform init -backend=false
           terraform validate
 
       - name: Terraform validate example
-        working-directory: terraform/examples/complete
+        working-directory: examples/complete
         run: |
           terraform init -backend=false
           terraform validate
 
       - name: Terraform tests
-        working-directory: terraform
+        working-directory: .
         run: terraform test
 
       - name: TFLint
         run: |
           tflint --init
-          tflint --chdir=terraform
+          tflint --chdir=.
 
       - name: Checkov
-        run: checkov -d terraform --quiet
+        run: checkov -d . --quiet
 
       - name: OPA tests
         working-directory: policies
@@ -272,6 +272,7 @@ jobs:
               "docs/ai-automation.md",
               "docs/security.md",
               "docs/terraform-module.md",
+              "docs/terraform-registry.md",
               ".github/copilot-instructions.md",
               ".github/pull_request_template.md",
           ]

@@ -18,7 +18,7 @@ Branch protection requires:
 
 | Changed paths | Job |
 |---|---|
-| `terraform/**`, `policies/**` | `infra-ci` |
+| `*.tf`, `policies/**` | `infra-ci` |
 | `helm/**`, `workloads/**`, `validation/**` | `app-ci` |
 | `scripts/**`, `tests/**`, `.github/workflows/**` | `automation-ci` |
 | `README.md`, `docs/**`, repo guidance | `docs-meta` |

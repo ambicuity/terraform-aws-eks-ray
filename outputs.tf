@@ -168,6 +168,6 @@ output "access_instructions" {
        Open: http://localhost:8265
     
     4. Deploy Ray cluster:
-       Install the KubeRay operator and deploy the chart in helm/ray or use terraform/examples/complete
+       Install the KubeRay operator and deploy the chart in helm/ray or use examples/complete
   EOT
 }
