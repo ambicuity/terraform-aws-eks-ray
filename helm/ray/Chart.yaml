@@ -14,5 +14,5 @@ keywords:
   - autoscaling
 
 maintainers:
-  - name: Infrastructure Team
-    email: infra@example.com
+  - name: ambicuity
+    url: https://github.com/ambicuity
