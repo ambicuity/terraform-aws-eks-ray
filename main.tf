@@ -174,9 +174,60 @@ resource "aws_iam_openid_connect_provider" "cluster_unmanaged" {
 }
 
 locals {
-  oidc_provider_arn         = var.enable_oidc_thumbprint_management ? aws_iam_openid_connect_provider.cluster_managed[0].arn : aws_iam_openid_connect_provider.cluster_unmanaged[0].arn
-  oidc_provider_url         = aws_eks_cluster.main.identity[0].oidc[0].issuer
-  gpu_fallback_enabled      = var.enable_gpu_nodes && var.gpu_capacity_type == "SPOT" && var.enable_gpu_ondemand_fallback
+  oidc_provider_arn = var.enable_oidc_thumbprint_management ? aws_iam_openid_connect_provider.cluster_managed[0].arn : aws_iam_openid_connect_provider.cluster_unmanaged[0].arn
+  oidc_provider_url = aws_eks_cluster.main.identity[0].oidc[0].issuer
+
+  legacy_gpu_fallback_enabled = var.enable_gpu_nodes && var.gpu_capacity_type == "SPOT" && var.enable_gpu_ondemand_fallback
+
+  legacy_gpu_worker_groups = var.enable_gpu_nodes ? merge(
+    {
+      primary = {
+        instance_types = var.gpu_node_instance_types
+        min_size       = var.gpu_node_min_size
+        max_size       = var.gpu_node_max_size
+        desired_size   = var.gpu_node_desired_size
+        capacity_type  = var.gpu_capacity_type
+        labels         = {}
+        taints         = []
+      }
+    },
+    local.legacy_gpu_fallback_enabled ? {
+      "on-demand-fallback" = {
+        instance_types = var.gpu_ondemand_fallback_instance_types
+        min_size       = var.gpu_ondemand_fallback_min_size
+        max_size       = var.gpu_ondemand_fallback_max_size
+        desired_size   = var.gpu_ondemand_fallback_desired_size
+        capacity_type  = "ON_DEMAND"
+        labels = {
+          "capacity-class" = "on-demand-fallback"
+        }
+        taints = []
+      }
+    } : {}
+  ) : {}
+
+  raw_gpu_worker_groups = length(var.gpu_worker_groups) > 0 ? var.gpu_worker_groups : local.legacy_gpu_worker_groups
+
+  effective_gpu_worker_groups = {
+    for group_name, group in local.raw_gpu_worker_groups : group_name => merge(group, {
+      capacity_type = try(group.capacity_type, "SPOT")
+      labels        = try(group.labels, {})
+      taints = length(try(group.taints, [])) > 0 ? group.taints : [
+        {
+          key    = "nvidia.com/gpu"
+          value  = "true"
+          effect = "NO_SCHEDULE"
+        }
+      ]
+      node_group_name = "${var.cluster_name}-${replace(group_name, "_", "-")}"
+    })
+  }
+
+  gpu_primary_group_key  = contains(keys(local.effective_gpu_worker_groups), "primary") ? "primary" : (length(keys(local.effective_gpu_worker_groups)) > 0 ? sort(keys(local.effective_gpu_worker_groups))[0] : null)
+  gpu_fallback_group_key = contains(keys(local.effective_gpu_worker_groups), "on-demand-fallback") ? "on-demand-fallback" : null
+  gpu_fallback_enabled   = local.gpu_fallback_group_key != null
+  gpu_total_desired_size = sum([for _, group in local.effective_gpu_worker_groups : group.desired_size])
+
   worker_security_group_ids = [aws_security_group.node.id, aws_eks_cluster.main.vpc_config[0].cluster_security_group_id]
 }
 

@@ -4,11 +4,11 @@
 [![CodeQL](https://github.com/ambicuity/terraform-aws-eks-ray/actions/workflows/codeql.yml/badge.svg)](https://github.com/ambicuity/terraform-aws-eks-ray/actions/workflows/codeql.yml)
 [![Gitleaks](https://github.com/ambicuity/terraform-aws-eks-ray/actions/workflows/gitleaks.yml/badge.svg)](https://github.com/ambicuity/terraform-aws-eks-ray/actions/workflows/gitleaks.yml)
 
-Production-grade Terraform module for AWS EKS clusters optimized for Ray ML workloads. Supports GPU Spot-first node groups with On-Demand fallback, IRSA-based service accounts, and KubeRay operator deployments.
+Production-grade Terraform module for AWS EKS clusters optimized for Ray ML workloads. Supports multi-GPU worker groups with mixed instance types, IRSA-based service accounts, and KubeRay operator deployments.
 
 ## Notable Features
 
-- **Spot-first GPU with On-Demand fallback** — GPU pools default to Spot capacity with an automatic On-Demand fallback group, unless explicitly disabled.
+- **Multi-GPU worker groups** — define heterogeneous GPU pools (for example inference + training) with per-group autoscaling and capacity type.
 - **Infra-only module** — The root module provisions the EKS platform only. Workload deployment (KubeRay, Ray charts, Velero) is composed separately in `examples/complete/`.
 - **Evidence-based validation** — all security and scaling claims are backed by a committed proof bundle under `tests/evidence/`, auditable via `make evidence`.
 - **OPA cost governance** — Rego policies block expensive GPU instance families and cap total node scale.
@@ -32,11 +32,25 @@ module "ray_eks_cluster" {
   cpu_node_max_size     = 10
   cpu_node_desired_size = 3
 
-  enable_gpu_nodes                   = true
-  gpu_capacity_type                  = "SPOT"
-  enable_gpu_ondemand_fallback       = true
-  gpu_ondemand_fallback_max_size     = 1
-  gpu_ondemand_fallback_desired_size = 0
+  gpu_worker_groups = {
+    inference = {
+      instance_types = ["g4dn.xlarge", "g5.xlarge"]
+      min_size       = 0
+      desired_size   = 1
+      max_size       = 4
+      capacity_type  = "SPOT"
+    }
+    training = {
+      instance_types = ["p4d.24xlarge"]
+      min_size       = 0
+      desired_size   = 0
+      max_size       = 2
+      capacity_type  = "ON_DEMAND"
+    }
+  }
+
+  gpu_policy_max_per_group = 8
+  gpu_policy_max_total     = 16
 }
 ```
 

@@ -122,7 +122,60 @@ spec:
           volumes:
 {{ toYaml $.Values.cpuWorkers.volumes | indent 12 }}
     {{- end }}
-    {{- if .Values.gpuWorkers.enabled }}
+    {{- if gt (len .Values.gpuWorkerGroups) 0 }}
+    {{- range $group := .Values.gpuWorkerGroups }}
+    - groupName: {{ $group.groupName | quote }}
+      replicas: {{ $group.replicas }}
+      minReplicas: {{ $group.minReplicas }}
+      maxReplicas: {{ $group.maxReplicas }}
+      rayStartParams:
+{{ toYaml $group.rayStartParams | indent 8 }}
+      template:
+        metadata:
+          labels:
+{{ toYaml $group.labels | indent 12 }}
+        spec:
+          serviceAccountName: {{ include "ray-cluster.serviceAccountName" $ }}
+          {{- with $group.nodeSelector }}
+          nodeSelector:
+{{ toYaml . | indent 12 }}
+          {{- end }}
+          {{- with $group.tolerations }}
+          tolerations:
+{{ toYaml . | indent 12 }}
+          {{- end }}
+          {{- with $group.topologySpreadConstraints }}
+          topologySpreadConstraints:
+{{ toYaml . | indent 12 }}
+          {{- end }}
+          {{- with $group.initContainers }}
+          initContainers:
+            {{- range . }}
+            - name: {{ .name }}
+              image: {{ .image | quote }}
+              command:
+{{ toYaml .command | indent 16 }}
+              args:
+{{ toYaml .args | indent 16 }}
+              env:
+                - name: RAY_IP
+                  value: {{ printf "%s-head-svc" $fullName | quote }}
+              resources:
+{{ toYaml .resources | indent 16 }}
+            {{- end }}
+          {{- end }}
+          containers:
+            - name: ray-worker
+              image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag }}"
+              imagePullPolicy: {{ $.Values.image.pullPolicy }}
+              resources:
+{{ toYaml $group.resources | indent 16 }}
+              volumeMounts:
+{{ toYaml $group.volumeMounts | indent 16 }}
+          volumes:
+{{ toYaml $group.volumes | indent 12 }}
+    {{- end }}
+    {{- else if .Values.gpuWorkers.enabled }}
     - groupName: {{ .Values.gpuWorkers.groupName | quote }}
       replicas: {{ .Values.gpuWorkers.replicas }}
       minReplicas: {{ .Values.gpuWorkers.minReplicas }}

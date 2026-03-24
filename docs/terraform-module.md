@@ -30,7 +30,13 @@ CPU pool:
 - `cpu_node_max_size`
 - `cpu_capacity_type`
 
-GPU pool:
+GPU pools (preferred):
+
+- `gpu_worker_groups` (map of named groups; each supports `instance_types`, `capacity_type`, and per-group `min_size`/`desired_size`/`max_size`)
+- `gpu_policy_max_per_group`
+- `gpu_policy_max_total`
+
+GPU pool (legacy compatibility, deprecated):
 
 - `enable_gpu_nodes`
 - `gpu_node_instance_types`
@@ -39,7 +45,7 @@ GPU pool:
 - `gpu_node_max_size`
 - `gpu_capacity_type`
 
-GPU fallback:
+GPU fallback (legacy compatibility, deprecated):
 
 - `enable_gpu_ondemand_fallback`
 - `gpu_ondemand_fallback_instance_types`
@@ -72,6 +78,8 @@ Those concerns now live in `examples/complete/`.
 - `cluster_oidc_issuer_url`
 - `oidc_provider_arn`
 - `cpu_node_group_id`
+- `gpu_node_group_ids`
+- `gpu_node_group_statuses`
 - `gpu_node_group_id`
 - `gpu_primary_node_group_id`
 - `gpu_fallback_node_group_id`
@@ -80,8 +88,9 @@ Those concerns now live in `examples/complete/`.
 
 ## Behavior Notes
 
-- The root module attaches the documented launch templates to the EKS node groups.
-- When `gpu_capacity_type = "SPOT"` and `enable_gpu_ondemand_fallback = true`, an additional On-Demand fallback GPU node group is created automatically.
+- The root module attaches the documented launch templates to all EKS node groups.
+- When `gpu_worker_groups` is provided, it overrides legacy `gpu_node_*` and fallback inputs.
+- Legacy Spot fallback behavior is preserved only when `gpu_worker_groups` is unset.
 - The module still creates EKS managed addons because they are platform infrastructure, not application workloads.
 - Workload deployment belongs in `helm/ray/` or `examples/complete/`.
 

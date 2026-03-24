@@ -136,19 +136,19 @@ variable "cpu_node_desired_size" {
 
 # Node Pool Configuration - GPU Workers
 variable "enable_gpu_nodes" {
-  description = "Enable GPU worker node pool"
+  description = "DEPRECATED: Enable the legacy single GPU worker node pool when gpu_worker_groups is not set."
   type        = bool
   default     = true
 }
 
 variable "gpu_node_instance_types" {
-  description = "Instance types for GPU worker nodes"
+  description = "DEPRECATED: Instance types for the legacy single GPU worker node pool."
   type        = list(string)
   default     = ["g4dn.xlarge", "g4dn.2xlarge"]
 }
 
 variable "gpu_node_min_size" {
-  description = "Minimum number of GPU worker nodes"
+  description = "DEPRECATED: Minimum number of nodes for the legacy single GPU worker node pool."
   type        = number
   default     = 0
 
@@ -159,7 +159,7 @@ variable "gpu_node_min_size" {
 }
 
 variable "gpu_node_max_size" {
-  description = "Maximum number of GPU worker nodes"
+  description = "DEPRECATED: Maximum number of nodes for the legacy single GPU worker node pool."
   type        = number
   default     = 5
 
@@ -170,7 +170,7 @@ variable "gpu_node_max_size" {
 }
 
 variable "gpu_node_desired_size" {
-  description = "Desired number of GPU worker nodes"
+  description = "DEPRECATED: Desired number of nodes for the legacy single GPU worker node pool."
   type        = number
   default     = 0
 }
@@ -187,7 +187,7 @@ variable "cpu_capacity_type" {
 }
 
 variable "gpu_capacity_type" {
-  description = "Capacity type for GPU worker nodes (ON_DEMAND or SPOT). Default is SPOT for cost optimization."
+  description = "DEPRECATED: Capacity type for the legacy single GPU worker node pool (ON_DEMAND or SPOT)."
   type        = string
   default     = "SPOT"
 
@@ -198,19 +198,19 @@ variable "gpu_capacity_type" {
 }
 
 variable "enable_gpu_ondemand_fallback" {
-  description = "Create a small On-Demand fallback GPU node group when the primary GPU pool uses SPOT capacity."
+  description = "DEPRECATED: Create a legacy On-Demand fallback GPU node group when legacy primary GPU uses SPOT."
   type        = bool
   default     = true
 }
 
 variable "gpu_ondemand_fallback_instance_types" {
-  description = "Instance types for the On-Demand fallback GPU worker nodes."
+  description = "DEPRECATED: Instance types for the legacy On-Demand fallback GPU worker pool."
   type        = list(string)
   default     = ["g4dn.xlarge"]
 }
 
 variable "gpu_ondemand_fallback_min_size" {
-  description = "Minimum number of nodes in the On-Demand fallback GPU worker pool."
+  description = "DEPRECATED: Minimum number of nodes in the legacy On-Demand fallback GPU worker pool."
   type        = number
   default     = 0
 
@@ -221,7 +221,7 @@ variable "gpu_ondemand_fallback_min_size" {
 }
 
 variable "gpu_ondemand_fallback_max_size" {
-  description = "Maximum number of nodes in the On-Demand fallback GPU worker pool."
+  description = "DEPRECATED: Maximum number of nodes in the legacy On-Demand fallback GPU worker pool."
   type        = number
   default     = 1
 
@@ -232,9 +232,53 @@ variable "gpu_ondemand_fallback_max_size" {
 }
 
 variable "gpu_ondemand_fallback_desired_size" {
-  description = "Desired number of nodes in the On-Demand fallback GPU worker pool."
+  description = "DEPRECATED: Desired number of nodes in the legacy On-Demand fallback GPU worker pool."
   type        = number
   default     = 0
+}
+
+variable "gpu_worker_groups" {
+  description = "Preferred multi-GPU worker group configuration. When set, this overrides legacy gpu_node_* variables."
+  type = map(object({
+    instance_types = list(string)
+    min_size       = number
+    max_size       = number
+    desired_size   = number
+    capacity_type  = optional(string, "SPOT")
+    labels         = optional(map(string), {})
+    taints = optional(list(object({
+      key    = string
+      value  = string
+      effect = string
+    })), [])
+  }))
+  default = {}
+
+  validation {
+    condition = alltrue([
+      for group_name, group in var.gpu_worker_groups : (
+        length(group.instance_types) > 0 &&
+        contains(["ON_DEMAND", "SPOT"], group.capacity_type) &&
+        group.min_size >= 0 &&
+        group.max_size >= group.min_size &&
+        group.desired_size >= group.min_size &&
+        group.desired_size <= group.max_size
+      )
+    ])
+    error_message = "Each gpu_worker_groups entry must define non-empty instance_types, valid ON_DEMAND/SPOT capacity_type, and min/desired/max values where min <= desired <= max."
+  }
+}
+
+variable "gpu_policy_max_per_group" {
+  description = "Maximum allowed potential GPUs for any single GPU worker group."
+  type        = number
+  default     = 8
+}
+
+variable "gpu_policy_max_total" {
+  description = "Maximum allowed total potential GPUs across all GPU worker groups."
+  type        = number
+  default     = 24
 }
 
 # Storage

@@ -57,6 +57,30 @@ module "ray_eks_cluster" {
   cpu_node_max_size     = 3
   cpu_node_desired_size = 1
 
-  # Disable GPU nodes for a cheaper complete example
-  enable_gpu_nodes = false
+  # Multi-GPU worker groups (issue #12) with conservative desired size defaults.
+  gpu_worker_groups = {
+    inference = {
+      instance_types = ["g4dn.xlarge", "g5.xlarge"]
+      min_size       = 0
+      desired_size   = 0
+      max_size       = 2
+      capacity_type  = "SPOT"
+      labels = {
+        workload = "inference"
+      }
+    }
+    training = {
+      instance_types = ["p4d.24xlarge"]
+      min_size       = 0
+      desired_size   = 0
+      max_size       = 1
+      capacity_type  = "ON_DEMAND"
+      labels = {
+        workload = "training"
+      }
+    }
+  }
+
+  gpu_policy_max_per_group = 8
+  gpu_policy_max_total     = 12
 }

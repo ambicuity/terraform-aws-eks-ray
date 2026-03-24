@@ -83,12 +83,12 @@ You are likely running Terraform `1.5.x`. Use Terraform `>= 1.6.0` or the bundle
 
 ### GPU workloads stay pending after Spot reclamation
 
-Check whether the platform was deployed with:
+Check whether the platform was deployed with mixed `gpu_worker_groups` capacity:
 
-- `gpu_capacity_type = "SPOT"`
-- `enable_gpu_ondemand_fallback = true`
+- at least one reliable GPU pool (`capacity_type = "ON_DEMAND"`) for critical jobs
+- one or more elastic Spot pools for opportunistic workloads
 
-If the fallback group is disabled, the cluster may have no reliable GPU landing zone after a Spot capacity loss.
+If all pools are Spot-only, the cluster may have no reliable GPU landing zone after a Spot capacity loss.
 
 ### Nodes cannot pull images or reach AWS APIs
 

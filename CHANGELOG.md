@@ -14,6 +14,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 - `release-please` workflow and config for automated semver releases
 - `terraform-docs` workflow for auto-generated module reference
 - Karpenter alternative section in autoscaling documentation
+- `gpu_worker_groups` input for multi-GPU worker pools with mixed instance types and per-group autoscaling
+- OPA GPU governance controls via `gpu_policy_max_per_group` and `gpu_policy_max_total`
+- map-style outputs: `gpu_node_group_ids` and `gpu_node_group_statuses`
 
 ### Changed
 
@@ -23,6 +26,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 - pinned public Terraform module examples to `v1.0.0`
 - updated Cluster Autoscaler Helm chart to v9.43.2 for K8s 1.31 compatibility
 - corrected ROADMAP: Grafana dashboards status changed from "Done" to "In Progress"
+- refactored GPU node group provisioning from singleton resources to dynamic `for_each` groups with legacy compatibility mapping
+- extended Ray chart support for multiple GPU worker groups via `gpuWorkerGroups`
 
 ### Removed
 
