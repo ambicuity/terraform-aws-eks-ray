@@ -18,7 +18,7 @@ terraform.rc
 # Kubernetes
 kubeconfig
 *.kubeconfig
-apiVersion
+/apiVersion
 .kube/
 
 # Python
