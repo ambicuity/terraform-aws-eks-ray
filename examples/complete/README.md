@@ -10,6 +10,7 @@ Included:
 - KubeRay operator Helm release
 - local `helm/ray` chart
 - optional Velero
+- multi-GPU worker group example (`inference` + `training`) with conservative desired sizes
 
 This is the place to look if you want to keep infrastructure and workload deployment in one stack while still keeping the reusable root module clean.
 

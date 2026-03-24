@@ -63,33 +63,43 @@ output "cpu_node_group_status" {
 }
 
 output "gpu_node_group_id" {
-  description = "GPU node group ID"
-  value       = var.enable_gpu_nodes ? aws_eks_node_group.gpu_workers[0].id : null
+  description = "DEPRECATED: Primary GPU node group ID. Use gpu_node_group_ids."
+  value       = local.gpu_primary_group_key != null ? aws_eks_node_group.gpu_workers[local.gpu_primary_group_key].id : null
 }
 
 output "gpu_node_group_status" {
-  description = "GPU node group status"
-  value       = var.enable_gpu_nodes ? aws_eks_node_group.gpu_workers[0].status : null
+  description = "DEPRECATED: Primary GPU node group status. Use gpu_node_group_statuses."
+  value       = local.gpu_primary_group_key != null ? aws_eks_node_group.gpu_workers[local.gpu_primary_group_key].status : null
 }
 
 output "gpu_primary_node_group_id" {
   description = "Primary GPU node group ID"
-  value       = var.enable_gpu_nodes ? aws_eks_node_group.gpu_workers[0].id : null
+  value       = local.gpu_primary_group_key != null ? aws_eks_node_group.gpu_workers[local.gpu_primary_group_key].id : null
 }
 
 output "gpu_primary_node_group_status" {
   description = "Primary GPU node group status"
-  value       = var.enable_gpu_nodes ? aws_eks_node_group.gpu_workers[0].status : null
+  value       = local.gpu_primary_group_key != null ? aws_eks_node_group.gpu_workers[local.gpu_primary_group_key].status : null
 }
 
 output "gpu_fallback_node_group_id" {
   description = "On-Demand fallback GPU node group ID"
-  value       = local.gpu_fallback_enabled ? aws_eks_node_group.gpu_ondemand_fallback[0].id : null
+  value       = local.gpu_fallback_enabled ? aws_eks_node_group.gpu_workers[local.gpu_fallback_group_key].id : null
 }
 
 output "gpu_fallback_node_group_status" {
   description = "On-Demand fallback GPU node group status"
-  value       = local.gpu_fallback_enabled ? aws_eks_node_group.gpu_ondemand_fallback[0].status : null
+  value       = local.gpu_fallback_enabled ? aws_eks_node_group.gpu_workers[local.gpu_fallback_group_key].status : null
+}
+
+output "gpu_node_group_ids" {
+  description = "GPU worker node group IDs keyed by gpu_worker_groups key."
+  value       = { for group_name, group in aws_eks_node_group.gpu_workers : group_name => group.id }
+}
+
+output "gpu_node_group_statuses" {
+  description = "GPU worker node group statuses keyed by gpu_worker_groups key."
+  value       = { for group_name, group in aws_eks_node_group.gpu_workers : group_name => group.status }
 }
 
 # Security
@@ -149,7 +159,7 @@ output "resource_tags" {
 # Cost Estimation
 output "estimated_monthly_cost" {
   description = "Rough monthly cost estimate (USD)"
-  value       = "Estimate: ${var.cpu_node_desired_size * 70 + (var.enable_gpu_nodes ? var.gpu_node_desired_size * 2160 : 0) + (local.gpu_fallback_enabled ? var.gpu_ondemand_fallback_desired_size * 526 : 0)} USD/month (approximate)"
+  value       = "Estimate: ${var.cpu_node_desired_size * 70 + (local.gpu_total_desired_size * 2160)} USD/month (approximate)"
 }
 
 # Access Instructions

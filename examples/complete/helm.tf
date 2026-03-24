@@ -67,12 +67,87 @@ resource "helm_release" "ray_cluster" {
 
   values = [
     <<-EOT
-    gpuWorkers:
-      enabled: false
     cpuWorkers:
       replicas: 1
       minReplicas: 1
       maxReplicas: 3
+    gpuWorkers:
+      enabled: false
+    gpuWorkerGroups:
+      - groupName: inference
+        replicas: 0
+        minReplicas: 0
+        maxReplicas: 2
+        rayStartParams: {}
+        resources:
+          requests:
+            cpu: "2"
+            memory: "8Gi"
+            nvidia.com/gpu: "1"
+          limits:
+            cpu: "4"
+            memory: "16Gi"
+            nvidia.com/gpu: "1"
+        volumeMounts:
+          - name: ray-tmp
+            mountPath: /tmp/ray
+        volumes:
+          - name: ray-tmp
+            emptyDir:
+              medium: Memory
+        nodeSelector:
+          ray.io/resource-type: gpu
+          gpu-group: inference
+        tolerations:
+          - key: nvidia.com/gpu
+            operator: Equal
+            value: "true"
+            effect: NoSchedule
+        topologySpreadConstraints: []
+        labels:
+          ray.io/node-type: worker
+          ray.io/resource-type: gpu
+          gpu-group: inference
+          app: ray
+          component: gpu-worker
+        initContainers: []
+      - groupName: training
+        replicas: 0
+        minReplicas: 0
+        maxReplicas: 1
+        rayStartParams: {}
+        resources:
+          requests:
+            cpu: "8"
+            memory: "32Gi"
+            nvidia.com/gpu: "1"
+          limits:
+            cpu: "16"
+            memory: "64Gi"
+            nvidia.com/gpu: "1"
+        volumeMounts:
+          - name: ray-tmp
+            mountPath: /tmp/ray
+        volumes:
+          - name: ray-tmp
+            emptyDir:
+              medium: Memory
+        nodeSelector:
+          ray.io/resource-type: gpu
+          gpu-group: training
+        tolerations:
+          - key: nvidia.com/gpu
+            operator: Equal
+            value: "true"
+            effect: NoSchedule
+        topologySpreadConstraints: []
+        labels:
+          ray.io/node-type: worker
+          ray.io/resource-type: gpu
+          gpu-group: training
+          app: ray
+          component: gpu-worker
+        initContainers: []
     EOT
   ]
 

@@ -10,8 +10,7 @@ The repository now treats autoscaling as two separate layers:
 The Terraform module defines the available capacity envelopes:
 
 - CPU node group
-- primary GPU node group
-- optional On-Demand GPU fallback node group
+- one or more GPU worker groups via `gpu_worker_groups`
 
 Cluster Autoscaler is not installed by the root module. The IRSA role is exported so a downstream stack can deploy it safely.
 
@@ -26,26 +25,24 @@ The chart enables Ray in-tree autoscaling by default and defines separate CPU an
 
 ## Spot GPU Reliability
 
-The previous repo story implied Spot-only GPU capacity was enough by itself. That is no longer the documented position.
-
 Current guidance:
 
-- Use `gpu_capacity_type = "SPOT"` for the primary GPU pool when you want the FinOps benefit
-- Keep `enable_gpu_ondemand_fallback = true` unless you have consciously accepted Spot-only risk
-- Keep fallback min and desired sizes at `0` if you want cost control while still preserving emergency capacity
+- Use per-group `capacity_type` in `gpu_worker_groups` to split FinOps-sensitive inference pools (Spot) from reliability-sensitive training pools (On-Demand)
+- Keep low `desired_size` with higher `max_size` for burst-capable pools
+- Tune OPA limits (`gpu_policy_max_per_group`, `gpu_policy_max_total`) to enforce budget boundaries
 
 Why:
 
 - Ray can recover tasks and objects
-- AWS can still reclaim an entire Spot pool at once
-- without an On-Demand fallback node group, the autoscaler has nowhere reliable to place replacement GPU pods
+- mixed GPU groups reduce blast radius when one pool is reclaimed or saturated
+- policy caps prevent runaway group scaling from overwhelming quota/budget
 
 ## Local Validation
 
-The local harness does not simulate AWS Spot reclamation. Instead, the repo validates the fallback design structurally:
+The local harness does not simulate AWS Spot reclamation. Instead, the repo validates the multi-group design structurally:
 
-- Terraform tests assert that Spot GPU mode creates an On-Demand fallback group by default
-- OPA policy denies Spot GPU node groups without an On-Demand fallback
+- Terraform tests assert legacy compatibility and multi-group behavior
+- OPA policy enforces per-group and total GPU cap constraints
 - `local_test.sh` focuses on the chart-backed CPU/HA path in minikube
 
 ## Karpenter Alternative
@@ -73,4 +70,3 @@ The local harness does not simulate AWS Spot reclamation. Instead, the repo vali
 - If you want to consolidate GPU Spot and On-Demand into a single provisioner rather than separate node groups.
 
 Adding Karpenter support is tracked in the [Roadmap](../ROADMAP.md) under Milestone 4.
-

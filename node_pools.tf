@@ -96,7 +96,7 @@ resource "aws_eks_node_group" "cpu_workers" {
 
 # Launch Template for GPU Workers
 resource "aws_launch_template" "gpu_workers" {
-  count                  = var.enable_gpu_nodes ? 1 : 0
+  count                  = length(local.effective_gpu_worker_groups) > 0 ? 1 : 0
   name_prefix            = "${var.cluster_name}-gpu-"
   description            = "Launch template for GPU worker nodes"
   update_default_version = true
@@ -139,15 +139,15 @@ resource "aws_launch_template" "gpu_workers" {
   }))
 }
 
-# Primary GPU Worker Node Group
+# Multi-GPU worker node groups (new gpu_worker_groups or legacy compatibility map)
 resource "aws_eks_node_group" "gpu_workers" {
-  count = var.enable_gpu_nodes ? 1 : 0
+  for_each = local.effective_gpu_worker_groups
 
   cluster_name    = aws_eks_cluster.main.name
-  node_group_name = "${var.cluster_name}-gpu-workers"
+  node_group_name = each.value.node_group_name
   node_role_arn   = aws_iam_role.node.arn
   subnet_ids      = var.worker_node_subnet_ids
-  instance_types  = var.gpu_node_instance_types
+  instance_types  = each.value.instance_types
   ami_type        = "AL2_x86_64_GPU"
 
   launch_template {
@@ -156,101 +156,46 @@ resource "aws_eks_node_group" "gpu_workers" {
   }
 
   scaling_config {
-    desired_size = var.gpu_node_desired_size
-    max_size     = var.gpu_node_max_size
-    min_size     = var.gpu_node_min_size
+    desired_size = each.value.desired_size
+    max_size     = each.value.max_size
+    min_size     = each.value.min_size
   }
 
-  capacity_type = var.gpu_capacity_type
+  capacity_type = each.value.capacity_type
 
   update_config {
     max_unavailable = 1
   }
 
-  labels = {
-    role                   = "gpu-worker"
-    workload-type          = "gpu-intensive"
-    "ray.io/node-type"     = "worker"
-    "ray.io/resource-type" = "gpu"
-    "nvidia.com/gpu"       = "true"
-    "capacity-class"       = lower(var.gpu_capacity_type)
-    managed-by             = "terraform"
-  }
+  labels = merge(
+    {
+      role                   = "gpu-worker"
+      workload-type          = "gpu-intensive"
+      "ray.io/node-type"     = "worker"
+      "ray.io/resource-type" = "gpu"
+      "nvidia.com/gpu"       = "true"
+      "capacity-class"       = lower(each.value.capacity_type)
+      "gpu-group"            = each.key
+      managed-by             = "terraform"
+    },
+    each.value.labels
+  )
 
-  taint {
-    key    = "nvidia.com/gpu"
-    value  = "true"
-    effect = "NO_SCHEDULE"
-  }
-
-  tags = {
-    Name                                            = "${var.cluster_name}-gpu-workers"
-    ManagedBy                                       = "Terraform"
-    "k8s.io/cluster-autoscaler/${var.cluster_name}" = "owned"
-    "k8s.io/cluster-autoscaler/enabled"             = var.enable_cluster_autoscaler ? "true" : "false"
-  }
-
-  lifecycle {
-    create_before_destroy = true
-    ignore_changes        = [scaling_config[0].desired_size]
-  }
-
-  depends_on = [
-    aws_iam_role_policy_attachment.node_AmazonEKSWorkerNodePolicy,
-    aws_iam_role_policy_attachment.node_AmazonEKS_CNI_Policy,
-    aws_iam_role_policy_attachment.node_AmazonEC2ContainerRegistryReadOnly,
-  ]
-}
-
-# Optional On-Demand GPU fallback for Spot-heavy clusters
-resource "aws_eks_node_group" "gpu_ondemand_fallback" {
-  count = local.gpu_fallback_enabled ? 1 : 0
-
-  cluster_name    = aws_eks_cluster.main.name
-  node_group_name = "${var.cluster_name}-gpu-ondemand-fallback"
-  node_role_arn   = aws_iam_role.node.arn
-  subnet_ids      = var.worker_node_subnet_ids
-  instance_types  = var.gpu_ondemand_fallback_instance_types
-  ami_type        = "AL2_x86_64_GPU"
-
-  launch_template {
-    id      = aws_launch_template.gpu_workers[0].id
-    version = aws_launch_template.gpu_workers[0].latest_version
-  }
-
-  scaling_config {
-    desired_size = var.gpu_ondemand_fallback_desired_size
-    max_size     = var.gpu_ondemand_fallback_max_size
-    min_size     = var.gpu_ondemand_fallback_min_size
-  }
-
-  capacity_type = "ON_DEMAND"
-
-  update_config {
-    max_unavailable = 1
-  }
-
-  labels = {
-    role                   = "gpu-worker"
-    workload-type          = "gpu-intensive"
-    "ray.io/node-type"     = "worker"
-    "ray.io/resource-type" = "gpu"
-    "nvidia.com/gpu"       = "true"
-    "capacity-class"       = "on-demand-fallback"
-    managed-by             = "terraform"
-  }
-
-  taint {
-    key    = "nvidia.com/gpu"
-    value  = "true"
-    effect = "NO_SCHEDULE"
+  dynamic "taint" {
+    for_each = each.value.taints
+    content {
+      key    = taint.value.key
+      value  = taint.value.value
+      effect = taint.value.effect
+    }
   }
 
   tags = {
-    Name                                            = "${var.cluster_name}-gpu-ondemand-fallback"
+    Name                                            = each.value.node_group_name
     ManagedBy                                       = "Terraform"
     "k8s.io/cluster-autoscaler/${var.cluster_name}" = "owned"
     "k8s.io/cluster-autoscaler/enabled"             = var.enable_cluster_autoscaler ? "true" : "false"
+    "ray.io/gpu-worker-group"                       = each.key
   }
 
   lifecycle {
