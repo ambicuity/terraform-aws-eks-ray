@@ -12,7 +12,7 @@ spec:
       ray.io/resource-type: cpu
 ---
 {{- end }}
-{{- if .Values.gpuWorkers.enabled }}
+{{- if or .Values.gpuWorkers.enabled (gt (len .Values.gpuWorkerGroups) 0) }}
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:

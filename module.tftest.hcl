@@ -127,3 +127,25 @@ run "multi_gpu_groups_override_legacy_inputs" {
     error_message = "Explicitly empty taints should be respected for gpu_worker_groups entries"
   }
 }
+
+run "explicit_on_demand_fallback_key_does_not_set_legacy_fallback_output" {
+  command = plan
+
+  variables {
+    enable_gpu_nodes = false
+    gpu_worker_groups = {
+      "on-demand-fallback" = {
+        instance_types = ["g4dn.xlarge"]
+        min_size       = 0
+        desired_size   = 0
+        max_size       = 1
+        capacity_type  = "SPOT"
+      }
+    }
+  }
+
+  assert {
+    condition     = output.gpu_fallback_node_group_id == null
+    error_message = "Legacy fallback outputs should not be inferred from key names in explicit gpu_worker_groups mode."
+  }
+}

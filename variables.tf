@@ -267,6 +267,15 @@ variable "gpu_worker_groups" {
     ])
     error_message = "Each gpu_worker_groups entry must define non-empty instance_types, valid ON_DEMAND/SPOT capacity_type, and min/desired/max values where min <= desired <= max."
   }
+
+  validation {
+    condition = alltrue([
+      for _, group in var.gpu_worker_groups : alltrue([
+        for taint in coalesce(try(group.taints, null), []) : contains(["NO_SCHEDULE", "NO_EXECUTE", "PREFER_NO_SCHEDULE"], taint.effect)
+      ])
+    ])
+    error_message = "gpu_worker_groups taints.effect must be one of: NO_SCHEDULE, NO_EXECUTE, PREFER_NO_SCHEDULE."
+  }
 }
 
 variable "gpu_policy_max_per_group" {

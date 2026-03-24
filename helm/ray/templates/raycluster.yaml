@@ -129,11 +129,11 @@ spec:
       minReplicas: {{ $group.minReplicas }}
       maxReplicas: {{ $group.maxReplicas }}
       rayStartParams:
-{{ toYaml $group.rayStartParams | indent 8 }}
+{{ toYaml (default dict $group.rayStartParams) | indent 8 }}
       template:
         metadata:
           labels:
-{{ toYaml $group.labels | indent 12 }}
+{{ toYaml (default dict $group.labels) | indent 12 }}
         spec:
           serviceAccountName: {{ include "ray-cluster.serviceAccountName" $ }}
           {{- with $group.nodeSelector }}
@@ -169,11 +169,11 @@ spec:
               image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag }}"
               imagePullPolicy: {{ $.Values.image.pullPolicy }}
               resources:
-{{ toYaml $group.resources | indent 16 }}
+{{ toYaml (default dict $group.resources) | indent 16 }}
               volumeMounts:
-{{ toYaml $group.volumeMounts | indent 16 }}
+{{ toYaml (default list $group.volumeMounts) | indent 16 }}
           volumes:
-{{ toYaml $group.volumes | indent 12 }}
+{{ toYaml (default list $group.volumes) | indent 12 }}
     {{- end }}
     {{- else if .Values.gpuWorkers.enabled }}
     - groupName: {{ .Values.gpuWorkers.groupName | quote }}

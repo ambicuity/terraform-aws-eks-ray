@@ -207,6 +207,7 @@ locals {
   ) : {}
 
   raw_gpu_worker_groups = length(var.gpu_worker_groups) > 0 ? var.gpu_worker_groups : local.legacy_gpu_worker_groups
+  is_legacy_gpu_mode    = length(var.gpu_worker_groups) == 0
 
   effective_gpu_worker_groups = {
     for group_name, group in local.raw_gpu_worker_groups : group_name => merge(group, {
@@ -224,7 +225,7 @@ locals {
   }
 
   gpu_primary_group_key  = contains(keys(local.effective_gpu_worker_groups), "primary") ? "primary" : (length(keys(local.effective_gpu_worker_groups)) > 0 ? sort(keys(local.effective_gpu_worker_groups))[0] : null)
-  gpu_fallback_group_key = contains(keys(local.effective_gpu_worker_groups), "on-demand-fallback") ? "on-demand-fallback" : null
+  gpu_fallback_group_key = local.is_legacy_gpu_mode && contains(keys(local.effective_gpu_worker_groups), "on-demand-fallback") ? "on-demand-fallback" : null
   gpu_fallback_enabled   = local.gpu_fallback_group_key != null
   gpu_total_desired_size = sum([for _, group in local.effective_gpu_worker_groups : group.desired_size])
 
