@@ -102,6 +102,7 @@ run "multi_gpu_groups_override_legacy_inputs" {
         desired_size   = 0
         max_size       = 1
         capacity_type  = "ON_DEMAND"
+        taints         = []
       }
     }
   }
@@ -119,5 +120,10 @@ run "multi_gpu_groups_override_legacy_inputs" {
   assert {
     condition     = aws_eks_node_group.gpu_workers["training"].capacity_type == "ON_DEMAND"
     error_message = "Training GPU group should keep ON_DEMAND capacity type"
+  }
+
+  assert {
+    condition     = length(aws_eks_node_group.gpu_workers["training"].taint) == 0
+    error_message = "Explicitly empty taints should be respected for gpu_worker_groups entries"
   }
 }

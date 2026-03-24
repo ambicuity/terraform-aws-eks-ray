@@ -109,3 +109,19 @@ test_multi_group_within_caps_allowed if {
   d := deny with input as mock_input
   count(d) == 0
 }
+
+test_unknown_gpu_instance_type_denied if {
+  mock_input := {
+    "variables": {
+      "gpu_policy_max_per_group": {"value": 16},
+      "gpu_policy_max_total": {"value": 32}
+    },
+    "resource_changes": [
+      launch_template(true, "required"),
+      gpu_node_group("aws_eks_node_group.gpu_workers[\"experimental\"]", ["g6.4xlarge"], 1)
+    ]
+  }
+  d := deny with input as mock_input
+  some msg in d
+  contains(msg, "unknown GPU instance type")
+}

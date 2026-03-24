@@ -250,7 +250,7 @@ variable "gpu_worker_groups" {
       key    = string
       value  = string
       effect = string
-    })), [])
+    })))
   }))
   default = {}
 

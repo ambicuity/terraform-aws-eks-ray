@@ -94,6 +94,16 @@ deny contains msg if {
   msg := sprintf("GPU worker group '%s' must define at least one instance type.", [node_group.address])
 }
 
+deny contains msg if {
+  node_group := gpu_node_groups[_]
+  instance_type := object.get(node_group.change.after, "instance_types", [])[_]
+  not gpu_per_instance[instance_type]
+  msg := sprintf(
+    "GPU worker group '%s' uses unknown GPU instance type '%s'. Add it to policy mapping before apply.",
+    [node_group.address, instance_type]
+  )
+}
+
 allow if {
   count(deny) == 0
 }

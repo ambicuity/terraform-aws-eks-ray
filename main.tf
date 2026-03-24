@@ -188,7 +188,7 @@ locals {
         desired_size   = var.gpu_node_desired_size
         capacity_type  = var.gpu_capacity_type
         labels         = {}
-        taints         = []
+        taints         = null
       }
     },
     local.legacy_gpu_fallback_enabled ? {
@@ -201,7 +201,7 @@ locals {
         labels = {
           "capacity-class" = "on-demand-fallback"
         }
-        taints = []
+        taints = null
       }
     } : {}
   ) : {}
@@ -212,7 +212,7 @@ locals {
     for group_name, group in local.raw_gpu_worker_groups : group_name => merge(group, {
       capacity_type = try(group.capacity_type, "SPOT")
       labels        = try(group.labels, {})
-      taints = length(try(group.taints, [])) > 0 ? group.taints : [
+      taints = try(group.taints, null) != null ? group.taints : [
         {
           key    = "nvidia.com/gpu"
           value  = "true"
