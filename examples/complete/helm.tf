@@ -1,5 +1,5 @@
 provider "helm" {
-  kubernetes {
+  kubernetes = {
     host                   = module.ray_eks_cluster.cluster_endpoint
     cluster_ca_certificate = base64decode(module.ray_eks_cluster.cluster_certificate_authority)
     token                  = data.aws_eks_cluster_auth.cluster.token
@@ -16,30 +16,28 @@ resource "helm_release" "cluster_autoscaler" {
   wait       = true
   timeout    = 300
 
-  set {
-    name  = "autoDiscovery.clusterName"
-    value = var.cluster_name
-  }
-
-  set {
-    name  = "awsRegion"
-    value = var.region
-  }
-
-  set {
-    name  = "rbac.serviceAccount.create"
-    value = "true"
-  }
-
-  set {
-    name  = "rbac.serviceAccount.name"
-    value = "cluster-autoscaler"
-  }
-
-  set {
-    name  = "rbac.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-    value = module.ray_eks_cluster.cluster_autoscaler_iam_role_arn
-  }
+  set = [
+    {
+      name  = "autoDiscovery.clusterName"
+      value = var.cluster_name
+    },
+    {
+      name  = "awsRegion"
+      value = var.region
+    },
+    {
+      name  = "rbac.serviceAccount.create"
+      value = "true"
+    },
+    {
+      name  = "rbac.serviceAccount.name"
+      value = "cluster-autoscaler"
+    },
+    {
+      name  = "rbac.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+      value = module.ray_eks_cluster.cluster_autoscaler_iam_role_arn
+    }
+  ]
 
   depends_on = [module.ray_eks_cluster]
 }

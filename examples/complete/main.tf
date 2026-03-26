@@ -9,7 +9,7 @@ data "aws_eks_cluster_auth" "cluster" {
 module "vpc" {
   # checkov:skip=CKV_TF_1: Version-pinned registry module — commit hash not applicable for public registry sources
   source  = "terraform-aws-modules/vpc/aws"
-  version = "5.5.3"
+  version = "6.6.0"
 
   name = "${var.cluster_name}-vpc"
   cidr = var.vpc_cidr
